@@ -1,0 +1,24 @@
+{
+  "$description": "Dark Luminous Workbench semantic aliases that extend the vendored brand exchange (surface ladder, secondary/muted text, quiet/strong lines, accent light-fallback -text roles). Single dark theme — light-surface variants are forced-colours/high-contrast fallbacks only (BRAND-RECONCILIATION.md §5-D).",
+  "semantic": {
+    "dark": {
+      "surface": {
+        "$type": "color",
+        "sunken":  { "$value": "#07090D", "$description": "Below-base wells (deepest)." },
+        "overlay": { "$value": "#1F2438", "$description": "Popovers, menus, toasts above raised." },
+        "inset":   { "$value": "#262B40", "$description": "Inset one step up from raised (was compat --color-surface-3)." }
+      },
+      "text": {
+        "$type": "color",
+        "secondary": { "$value": "rgba(243, 240, 232, 0.72)", "$description": "Supporting text on dark (paper @72%)." },
+        "muted":     { "$value": "rgba(243, 240, 232, 0.52)", "$description": "De-emphasised text/labels (paper @52%)." },
+        "on-accent": { "$value": "{brand.color.archive-950}", "$description": "Ink on a luminous accent fill." }
+      },
+      "line": {
+        "$type": "color",
+        "quiet":  { "$value": "{brand.color.line-on-dark}", "$description": "Default separators / hairlines." },
+        "strong": { "$value": "rgba(243, 240, 232, 0.24)", "$description": "Emphasised borders / focused fields." }
+      }
+    }
+  }
+}

@@ -1,0 +1,267 @@
+// @curio/tokens — Style Dictionary build.
+//
+// Single source for all three Curio products (pokemon-tool app, cardops-website, CurioCapture iOS).
+// Source: the DTCG brand tokens (src/tokens/curio-brand.tokens.json, vendored from brand/v1.0.0) +
+// the package-local design-system overrides (radius scale, dark-semantic extensions, independent
+// status scale, type). Outputs, dark-only:
+//   • dist/curio-brand.css            (Tailwind v4 @theme + :root — same format for app + website)
+//   • dist/CurioTokens.swift           (reference copy)
+//   • swift/Sources/CurioTokens/CurioTokens.swift  (the actual SwiftPM module source)
+//
+// A WCAG contrast validator runs after the build and FAILS the build if any status pairing drops
+// below AA 4.5.
+//
+// Consuming repos install this package pinned to a git tag (github:<org>/curio-tokens#vX.Y.Z) and
+// import dist/curio-brand.css directly (no hand-copying) or, for iOS, add this repo as a SwiftPM
+// dependency and `import CurioTokens`.
+
+import StyleDictionary from "style-dictionary";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// ── Value coercion helpers (DTCG → platform value) ──────────────────────────
+
+const to255 = (c) => Math.round(c * 255);
+const hex2 = (n) => n.toString(16).padStart(2, "0");
+
+/** DTCG color object | hex/rgba string → CSS colour string (#hex or rgba()). */
+function colorToCss(value) {
+  if (typeof value === "string") return value; // already hex / rgba
+  if (value && Array.isArray(value.components)) {
+    const [r, g, b] = value.components.map(to255);
+    const a = value.alpha ?? 1;
+    if (a >= 1) return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
+    return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
+  }
+  return String(value);
+}
+
+const dimToCss = (v) => (typeof v === "object" && v ? `${v.value}${v.unit ?? "px"}` : `${v}px`);
+const durToCss = (v) => (typeof v === "object" && v ? `${v.value}${v.unit ?? "ms"}` : `${v}ms`);
+const bezierToCss = (v) => (Array.isArray(v) ? `cubic-bezier(${v.join(", ")})` : String(v));
+const fontToCss = (v) => (Array.isArray(v) ? v.map((f) => (/\s/.test(f) ? `"${f}"` : f)).join(", ") : String(v));
+
+// ── Clean CSS var / Swift names from token paths ────────────────────────────
+function cleanName(path) {
+  const p = [...path];
+  if (p[0] === "semantic") {
+    if (p[1] === "dark") {
+      const rest = p.slice(2).map((s) => (s === "brand-base" ? "base" : s === "brand-raised" ? "raised" : s));
+      return `curio-${rest.join("-")}`;
+    }
+    if (p[1] === "light") {
+      const rest = p.slice(2).map((s) => (s === "brand-base" ? "base" : s));
+      return `curio-fallback-${rest.join("-")}`;
+    }
+    if (p[1] === "focus") return `curio-focus-${p.slice(2).join("-")}`;
+  }
+  if (p[0] === "status") return `curio-status-${p.slice(1).join("-")}`;
+  if (p[0] === "radius") return `curio-radius-${p.slice(1).join("-")}`;
+  if (p[0] === "font") return `curio-font-${p.slice(1).join("-")}`;
+  if (p[0] === "font-feature") return `curio-font-${p.slice(1).join("-")}`;
+  if (p[0] === "brand") {
+    if (p[1] === "color") return `curio-brand-${p.slice(2).join("-")}`;
+    if (p[1] === "opacity") return `curio-opacity-${p.slice(2).join("-").replace("glow-maximum", "glow-max")}`;
+    if (p[1] === "blur") return `curio-blur-${p.slice(2).join("-").replace("glow-small", "glow-sm").replace("glow-medium", "glow-md").replace("glow-large", "glow-lg")}`;
+    if (p[1] === "border") return `curio-border-${p.slice(2).join("-")}`;
+    if (p[1] === "motion" && p[2] === "duration") return `curio-duration-${p.slice(3).join("-")}`;
+    if (p[1] === "motion" && p[2] === "easing") return `curio-ease-${p.slice(3).join("-")}`;
+    if (p[1] === "radius") return `curio-brand-radius-${p.slice(2).join("-")}`;
+    if (p[1] === "type") return `curio-brand-type-${p.slice(2).join("-")}`;
+  }
+  return `curio-${p.join("-")}`;
+}
+
+// ── Transforms ──────────────────────────────────────────────────────────────
+StyleDictionary.registerTransform({
+  name: "curio/name", type: "name",
+  transform: (token) => cleanName(token.path),
+});
+StyleDictionary.registerTransform({
+  name: "curio/value", type: "value", transitive: true,
+  transform: (token) => {
+    const t = token.$type ?? token.type;
+    const v = token.$value ?? token.value;
+    switch (t) {
+      case "color":       return colorToCss(v);
+      case "dimension":   return dimToCss(v);
+      case "duration":    return durToCss(v);
+      case "cubicBezier": return bezierToCss(v);
+      case "fontFamily":  return fontToCss(v);
+      default:            return typeof v === "object" ? JSON.stringify(v) : String(v);
+    }
+  },
+});
+
+const TRANSFORMS = ["curio/name", "curio/value"];
+
+// SD v4 DTCG mode keeps the (transformed) value on `$value`; fall back to `value` for safety.
+const tv = (t) => t.$value ?? t.value;
+
+// ── Partitioning: which tokens are Tailwind @theme utilities vs plain vars ──
+const isColor  = (t) => (t.$type ?? t.type) === "color";
+const isRadius = (t) => t.path[0] === "radius";
+const isFont   = (t) => t.path[0] === "font" && t.path[1] !== undefined && t.path.length === 2 && ["display", "product", "evidence"].includes(t.path[1]);
+const themeVar = (t) => isColor(t) || isRadius(t) || isFont(t);
+
+function themeName(t) {
+  const n = cleanName(t.path); // e.g. curio-surface-base
+  if (isColor(t))  return `--color-${n.replace(/^curio-/, "curio-")}`;
+  if (isRadius(t)) return `--radius-${t.path.slice(1).join("-")}`.replace(/^--radius-/, "--radius-curio-");
+  if (isFont(t))   return `--font-curio-${t.path.slice(1).join("-")}`;
+  return `--${n}`;
+}
+
+// ── Formats ─────────────────────────────────────────────────────────────────
+const header = "/* Curio brand tokens — GENERATED by @curio/tokens (Style Dictionary). Do not edit by hand. */\n/* Source: this package's src/tokens. Run: npm run build */\n";
+
+StyleDictionary.registerFormat({
+  name: "curio/css-theme",
+  format: ({ dictionary }) => {
+    const all = dictionary.allTokens;
+    const theme = all.filter(themeVar)
+      .map((t) => `  ${themeName(t)}: ${tv(t)};`).join("\n");
+    const root = all.filter((t) => !themeVar(t))
+      .map((t) => `  --${cleanName(t.path)}: ${tv(t)};`).join("\n");
+    return `${header}\n@theme {\n${theme}\n}\n\n:root {\n${root}\n}\n`;
+  },
+});
+
+StyleDictionary.registerFormat({
+  name: "curio/swift",
+  format: ({ dictionary }) => {
+    const swiftName = (path) => {
+      const camel = cleanName(path).replace(/^curio-/, "").replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+      return camel.replace(/[^a-zA-Z0-9]/g, "");
+    };
+    const colors = [], dims = [], durs = [], others = [];
+    for (const t of dictionary.allTokens) {
+      const type = t.$type ?? t.type;
+      const name = swiftName(t.path);
+      if (type === "color") {
+        const c = String(tv(t));
+        const m = c.match(/^#([0-9a-fA-F]{6})$/);
+        if (m) {
+          const r = parseInt(m[1].slice(0, 2), 16) / 255, g = parseInt(m[1].slice(2, 4), 16) / 255, b = parseInt(m[1].slice(4, 6), 16) / 255;
+          colors.push(`    public static let ${name} = Color(red: ${r.toFixed(4)}, green: ${g.toFixed(4)}, blue: ${b.toFixed(4)})`);
+        } else {
+          const rm = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+          if (rm) colors.push(`    public static let ${name} = Color(red: ${(rm[1] / 255).toFixed(4)}, green: ${(rm[2] / 255).toFixed(4)}, blue: ${(rm[3] / 255).toFixed(4)}, opacity: ${rm[4] ?? "1"})`);
+        }
+      } else if (type === "dimension") {
+        dims.push(`    public static let ${name}: CGFloat = ${parseFloat(tv(t))}`);
+      } else if (type === "duration") {
+        durs.push(`    public static let ${name}: TimeInterval = ${parseFloat(tv(t)) / 1000}`);
+      } else if (type === "fontFamily") {
+        others.push(`    public static let ${name} = ${JSON.stringify(String(tv(t)).split(",")[0].replace(/"/g, "").trim())}`);
+      }
+    }
+    return `// Curio brand tokens — GENERATED by @curio/tokens (Style Dictionary). Do not edit by hand.\n// Run: npm run build\nimport SwiftUI\n\npublic enum CurioTokens {\n  public enum Colors {\n${colors.join("\n")}\n  }\n  public enum Radius {\n${dims.join("\n")}\n  }\n  public enum Duration {\n${durs.join("\n")}\n  }\n  public enum Fonts {\n${others.join("\n")}\n  }\n}\n`;
+  },
+});
+
+// ── Build ────────────────────────────────────────────────────────────────────
+const source = [resolve(__dirname, "src/tokens/*.json")];
+
+const DIST = resolve(__dirname, "dist") + "/";
+const SWIFT_SOURCES = resolve(__dirname, "Sources/CurioTokens") + "/";
+
+const sd = new StyleDictionary({
+  source,
+  usesDtcg: true,
+  log: { verbosity: "silent", warnings: "disabled" },
+  platforms: {
+    css: {
+      transforms: TRANSFORMS, buildPath: DIST,
+      files: [{ destination: "curio-brand.css", format: "curio/css-theme" }],
+    },
+    "swift-dist": {
+      transforms: TRANSFORMS, buildPath: DIST,
+      files: [{ destination: "CurioTokens.swift", format: "curio/swift" }],
+    },
+    "swift-package": {
+      transforms: TRANSFORMS, buildPath: SWIFT_SOURCES,
+      files: [{ destination: "CurioTokens.swift", format: "curio/swift" }],
+    },
+  },
+});
+
+await sd.buildAllPlatforms();
+console.log("✓ Tokens built → dist/curio-brand.css, dist/CurioTokens.swift, Sources/CurioTokens/CurioTokens.swift");
+
+// ── WCAG contrast validation (AA gate) ───────────────────────────────────────
+// Validate the ACTUAL generated CSS (what every consumer imports), not an intermediate.
+const { readFileSync } = await import("node:fs");
+const css = readFileSync(`${DIST}curio-brand.css`, "utf8");
+const val = {};
+for (const m of css.matchAll(/--(?:color-|radius-|font-)?(curio-[a-z0-9-]+)\s*:\s*([^;]+);/g)) {
+  val[m[1]] = m[2].trim();
+}
+
+function parseRGB(c) {
+  const h = c.match(/^#([0-9a-fA-F]{6})$/);
+  if (h) return [0, 2, 4].map((i) => parseInt(h[1].slice(i, i + 2), 16));
+  const r = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+  if (r) return [+r[1], +r[2], +r[3], r[4] === undefined ? 1 : +r[4]];
+  return null;
+}
+function composite(fg, bg) {
+  if (fg.length < 4 || fg[3] >= 1) return fg.slice(0, 3);
+  const a = fg[3];
+  return [0, 1, 2].map((i) => Math.round(fg[i] * a + bg[i] * (1 - a)));
+}
+function lum([r, g, b]) {
+  const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+function ratio(fgc, bgc) {
+  const bg = parseRGB(bgc).slice(0, 3);
+  const fg = composite(parseRGB(fgc), bg);
+  const [a, b] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+  return (a + 0.05) / (b + 0.05);
+}
+
+const base = val["curio-surface-base"], raised = val["curio-surface-raised"];
+// Hard AA gate (≥4.5): status pairings + primary text.
+const aaChecks = [
+  ["status success ink-on-fill", val["curio-status-success-ink"], val["curio-status-success-fill"]],
+  ["status warning ink-on-fill", val["curio-status-warning-ink"], val["curio-status-warning-fill"]],
+  ["status danger ink-on-fill",  val["curio-status-danger-ink"],  val["curio-status-danger-fill"]],
+  ["status success on-dark/base", val["curio-status-success-on-dark"], base],
+  ["status warning on-dark/base", val["curio-status-warning-on-dark"], base],
+  ["status danger on-dark/base",  val["curio-status-danger-on-dark"],  base],
+  ["text primary / base",         val["curio-text-primary"], base],
+  ["text primary / raised",       val["curio-text-primary"], raised],
+];
+// Report-only (UI/graphical ≥3.0): accents + focus + secondary text.
+const uiChecks = [
+  ["accent ready / base",      val["curio-accent-ready"], base],
+  ["accent evidence / base",   val["curio-accent-evidence"], base],
+  ["accent completion / base", val["curio-accent-completion"], base],
+  ["focus ring / base",        val["curio-focus-ring"], base],
+  ["text secondary / base",    val["curio-text-secondary"], base],
+];
+
+let failed = 0;
+console.log("\nWCAG contrast (dark) — AA gate ≥4.5:");
+for (const [label, fg, bg] of aaChecks) {
+  if (!fg || !bg) { console.log(`  ? ${label}: missing token`); failed++; continue; }
+  const r = ratio(fg, bg);
+  const ok = r >= 4.5;
+  if (!ok) failed++;
+  console.log(`  ${ok ? "✓" : "✗"} ${label.padEnd(30)} ${r.toFixed(2)}`);
+}
+console.log("UI/graphical (report, target ≥3.0):");
+for (const [label, fg, bg] of uiChecks) {
+  if (!fg || !bg) { console.log(`  ? ${label}: missing token`); continue; }
+  const r = ratio(fg, bg);
+  console.log(`  ${r >= 3 ? "✓" : "•"} ${label.padEnd(30)} ${r.toFixed(2)}${r < 3 ? "  (use for large/semibold + paper label)" : ""}`);
+}
+
+if (failed > 0) {
+  console.error(`\n✗ ${failed} AA contrast check(s) failed — fix the token values before shipping.`);
+  process.exit(1);
+}
+console.log("\n✓ All AA gate checks pass.");

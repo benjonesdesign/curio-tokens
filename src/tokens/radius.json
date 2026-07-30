@@ -1,0 +1,10 @@
+{
+  "$description": "Design-system radius scale — Ben's 4-multiple override of the brand's 6/10/16/24 (BRAND-RECONCILIATION.md). The design system owns scale implementation; this is not a breaking brand change.",
+  "radius": {
+    "$type": "dimension",
+    "sm":      { "$value": { "value": 4,  "unit": "px" }, "$description": "Chips, inputs, small controls." },
+    "md":      { "$value": { "value": 8,  "unit": "px" }, "$description": "Buttons, cards, default." },
+    "lg":      { "$value": { "value": 16, "unit": "px" }, "$description": "Panels, sheets, larger surfaces." },
+    "feature": { "$value": { "value": 24, "unit": "px" }, "$description": "Feature moments, hero cards." }
+  }
+}

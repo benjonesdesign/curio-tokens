@@ -1,0 +1,13 @@
+{
+  "$description": "Semantic type families + the figures rule (BRAND-RECONCILIATION.md §5-B). Figures (prices/profit/%) use Plus Jakarta Sans TABULAR by default; IBM Plex Mono is RESERVED for evidence/identifiers (card no., cert, SKU, indexing) — it is NOT the default numeric face.",
+  "font": {
+    "$type": "fontFamily",
+    "display":  { "$value": "{brand.type.display}",  "$description": "Headings / brand display (Plus Jakarta, weight+scale+tracking express)." },
+    "product":  { "$value": "{brand.type.product}",  "$description": "UI + body + figures (Plus Jakarta; figures use tabular-nums)." },
+    "evidence": { "$value": "{brand.type.evidence}", "$description": "Evidence/identifiers ONLY — card no., cert, SKU, indexing (IBM Plex Mono)." }
+  },
+  "font-feature": {
+    "$type": "string",
+    "figures": { "$value": "\"tnum\" 1, \"lnum\" 1", "$description": "Apply to prices/profit/% for aligned tabular lining figures." }
+  }
+}

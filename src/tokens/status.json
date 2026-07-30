@@ -1,0 +1,21 @@
+{
+  "$description": "Product status scale — INDEPENDENT of brand accents (mint/violet/amber) by contract. Never alias status to a brand accent. Always convey status with ICON + TEXT, never colour alone. Dark-surface variants; AA-tuned (BRAND-RECONCILIATION.md §5-A + contrast check). `fill` pairs with `ink` (dark) on a pill; `on-dark` is the readable text/icon colour on archive/midnight surfaces.",
+  "status": {
+    "$type": "color",
+    "success": {
+      "fill":    { "$value": "#2BB673", "$description": "Success pill fill." },
+      "ink":     { "$value": "#0B0D12", "$description": "Text/icon ON the success fill (dark ink)." },
+      "on-dark": { "$value": "#4FD08F", "$description": "Success text/icon on a dark surface." }
+    },
+    "warning": {
+      "fill":    { "$value": "#E0A73A", "$description": "Warning pill fill." },
+      "ink":     { "$value": "#0B0D12", "$description": "Text/icon ON the warning fill (dark ink)." },
+      "on-dark": { "$value": "#E9B75B", "$description": "Warning text/icon on a dark surface." }
+    },
+    "danger": {
+      "fill":    { "$value": "#E5533D", "$description": "Danger pill fill (white text failed 3.73 → dark ink 5.21)." },
+      "ink":     { "$value": "#0B0D12", "$description": "Text/icon ON the danger fill (dark ink, 5.21)." },
+      "on-dark": { "$value": "#F0806C", "$description": "Danger text/icon on a dark surface." }
+    }
+  }
+}

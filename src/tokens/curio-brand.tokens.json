@@ -1,0 +1,292 @@
+{
+  "$description": "Approved Curio brand foundation exchange file using the DTCG 2025.10 format. Map these inputs into the established design-system architecture rather than consuming primitive values directly in components.",
+  "brand": {
+    "color": {
+      "$type": "color",
+      "archive-950": {
+        "$description": "Deepest Curio brand canvas.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.043137, 0.05098, 0.070588],
+          "alpha": 1
+        }
+      },
+      "midnight-900": {
+        "$description": "Raised dark brand surface.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.090196, 0.101961, 0.168627],
+          "alpha": 1
+        }
+      },
+      "paper-50": {
+        "$description": "Warm primary light surface and dark-theme text.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.952941, 0.941176, 0.909804],
+          "alpha": 1
+        }
+      },
+      "curio-light-400": {
+        "$description": "Luminous readiness, focus, and confident-action accent for dark surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.47451, 0.878431, 0.764706],
+          "alpha": 1
+        }
+      },
+      "curio-light-700": {
+        "$description": "Accessible readiness and action accent for light surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.090196, 0.403922, 0.337255],
+          "alpha": 1
+        }
+      },
+      "violet-400": {
+        "$description": "Luminous evidence and comparison accent for dark surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.509804, 0.462745, 0.909804],
+          "alpha": 1
+        }
+      },
+      "violet-700": {
+        "$description": "Accessible evidence and comparison accent for light surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.298039, 0.247059, 0.717647],
+          "alpha": 1
+        }
+      },
+      "amber-400": {
+        "$description": "Luminous margin-attention and completed-work accent for dark surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.905882, 0.658824, 0.360784],
+          "alpha": 1
+        }
+      },
+      "amber-800": {
+        "$description": "Accessible margin-attention and completed-work accent for light surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.482353, 0.298039, 0.07451],
+          "alpha": 1
+        }
+      },
+      "line-on-dark": {
+        "$description": "Quiet separator and holding-line colour on Archive Black.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.952941, 0.941176, 0.909804],
+          "alpha": 0.14
+        }
+      },
+      "line-on-light": {
+        "$description": "Quiet separator and holding-line colour on Soft Paper.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.043137, 0.05098, 0.070588],
+          "alpha": 0.13
+        }
+      },
+      "index-amber-on-dark": {
+        "$description": "Decorative construction and registration line on dark brand surfaces.",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [0.905882, 0.658824, 0.360784],
+          "alpha": 0.38
+        }
+      }
+    },
+    "type": {
+      "display": {
+        "$type": "fontFamily",
+        "$description": "Brand-display family; expression changes through weight, scale, and tracking.",
+        "$value": ["Plus Jakarta Sans", "Noto Sans", "Arial", "sans-serif"]
+      },
+      "product": {
+        "$type": "fontFamily",
+        "$description": "Web product and supporting sans, preserving the live Curio implementation.",
+        "$value": ["Plus Jakarta Sans", "Noto Sans", "Arial", "sans-serif"]
+      },
+      "evidence": {
+        "$type": "fontFamily",
+        "$description": "Optional compact evidence and identifier family; do not use as the default numeric face.",
+        "$value": ["IBM Plex Mono", "ui-monospace", "monospace"]
+      }
+    },
+    "radius": {
+      "$type": "dimension",
+      "small": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        }
+      },
+      "medium": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "large": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        }
+      },
+      "feature": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        }
+      }
+    },
+    "border": {
+      "hairline": {
+        "$type": "dimension",
+        "$description": "Construction, indexing and quiet separator base width.",
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
+      }
+    },
+    "opacity": {
+      "$type": "number",
+      "texture-quiet": {
+        "$description": "Default restrained texture strength.",
+        "$value": 0.02
+      },
+      "glow-maximum": {
+        "$description": "Maximum local brand-halo opacity; never a focus or status indicator.",
+        "$value": 0.16
+      }
+    },
+    "blur": {
+      "$type": "dimension",
+      "glow-small": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        }
+      },
+      "glow-medium": {
+        "$value": {
+          "value": 48,
+          "unit": "px"
+        }
+      },
+      "glow-large": {
+        "$value": {
+          "value": 72,
+          "unit": "px"
+        }
+      }
+    },
+    "motion": {
+      "duration": {
+        "$type": "duration",
+        "fast": {
+          "$value": {
+            "value": 120,
+            "unit": "ms"
+          }
+        },
+        "standard": {
+          "$value": {
+            "value": 200,
+            "unit": "ms"
+          }
+        },
+        "reveal": {
+          "$value": {
+            "value": 400,
+            "unit": "ms"
+          }
+        },
+        "ambient": {
+          "$value": {
+            "value": 8000,
+            "unit": "ms"
+          }
+        }
+      },
+      "easing": {
+        "$type": "cubicBezier",
+        "reveal": {
+          "$value": [0.16, 1, 0.3, 1]
+        },
+        "exit": {
+          "$value": [0.4, 0, 1, 1]
+        }
+      }
+    }
+  },
+  "semantic": {
+    "dark": {
+      "surface": {
+        "$type": "color",
+        "brand-base": {
+          "$value": "{brand.color.archive-950}"
+        },
+        "brand-raised": {
+          "$value": "{brand.color.midnight-900}"
+        }
+      },
+      "text": {
+        "$type": "color",
+        "primary": {
+          "$value": "{brand.color.paper-50}"
+        }
+      },
+      "accent": {
+        "$type": "color",
+        "ready": {
+          "$value": "{brand.color.curio-light-400}"
+        },
+        "evidence": {
+          "$value": "{brand.color.violet-400}"
+        },
+        "completion": {
+          "$value": "{brand.color.amber-400}"
+        }
+      }
+    },
+    "light": {
+      "surface": {
+        "$type": "color",
+        "brand-base": {
+          "$value": "{brand.color.paper-50}"
+        }
+      },
+      "text": {
+        "$type": "color",
+        "primary": {
+          "$value": "{brand.color.archive-950}"
+        }
+      },
+      "accent": {
+        "$type": "color",
+        "ready-text": {
+          "$value": "{brand.color.curio-light-700}"
+        },
+        "evidence-text": {
+          "$value": "{brand.color.violet-700}"
+        },
+        "attention-text": {
+          "$value": "{brand.color.amber-800}"
+        }
+      }
+    },
+    "focus": {
+      "ring": {
+        "$type": "color",
+        "$description": "Brand-aligned focus ring; validate against the component background.",
+        "$value": "{brand.color.amber-400}"
+      }
+    }
+  }
+}
