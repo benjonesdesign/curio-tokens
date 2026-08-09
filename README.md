@@ -28,11 +28,25 @@ generated output directly; nothing is ever hand-copied between repos.
 @import "@curio/tokens/dist/curio-brand.css";
 ```
 
-**iOS (SwiftPM):** add this repo as a package dependency pinned to an exact version (e.g. `1.0.0`)
+**iOS (SwiftPM):** add this repo as a package dependency pinned to an exact version (e.g. `1.1.0`)
 in Xcode / `project.yml`, then:
 ```swift
 import CurioTokens
 Color(...) // e.g. CurioTokens.Colors.brandCurioLight400
+CurioTokens.Radius.radiusMd     // CGFloat corner radius
+CurioTokens.Duration.durationStandard  // TimeInterval for animations
+```
+
+**Brand fonts (`Fonts` names + the actual typefaces, v1.1.0+):** `CurioTokens.Fonts.brandTypeProduct`
+etc. give you the family-name string, but on iOS a SwiftPM resource bundle's fonts are never
+auto-registered the way an app target's `Info.plist` would — call `CurioTokens.registerFonts()`
+once, early (e.g. your App's `init()`), before using `Font.custom(CurioTokens.Fonts.*, size:)`:
+```swift
+@main
+struct YourApp: App {
+    init() { CurioTokens.registerFonts() }
+    ...
+}
 ```
 
 ## Releasing a new version

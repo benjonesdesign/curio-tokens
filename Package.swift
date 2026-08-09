@@ -8,6 +8,10 @@ let package = Package(
         .library(name: "CurioTokens", targets: ["CurioTokens"]),
     ],
     targets: [
-        .target(name: "CurioTokens", dependencies: []),
+        .target(
+            name: "CurioTokens",
+            dependencies: [],
+            resources: [.copy("Fonts")]
+        ),
     ]
 )
