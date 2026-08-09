@@ -1,0 +1,12 @@
+{
+  "$description": "Design-system spacing scale. pokemon-tool's web app has never had a custom spacing token layer — it uses Tailwind's default 4px-based scale directly. This formalizes the app's actual most-frequently-used steps (by usage count across app/components/lib) as named brand tokens, so iOS has an explicit, non-guessed spacing vocabulary to match — the same extraction discipline used for radius/status. Not a redesign: these values already are the shipping spacing rhythm.",
+  "spacing": {
+    "$type": "dimension",
+    "xs":  { "$value": { "value": 4,  "unit": "px" }, "$description": "Tightest gaps — icon-to-label, inline micro-spacing." },
+    "sm":  { "$value": { "value": 8,  "unit": "px" }, "$description": "Compact control padding, tight stacks." },
+    "md":  { "$value": { "value": 12, "unit": "px" }, "$description": "Default gap — the single most common spacing value in the app." },
+    "lg":  { "$value": { "value": 16, "unit": "px" }, "$description": "Card/panel padding, standard section gaps." },
+    "xl":  { "$value": { "value": 24, "unit": "px" }, "$description": "Section-level separation." },
+    "xxl": { "$value": { "value": 32, "unit": "px" }, "$description": "Page-level / major layout separation." }
+  }
+}

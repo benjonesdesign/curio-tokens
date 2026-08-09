@@ -60,6 +60,14 @@ public enum CurioTokens {
     public static let radiusLg: CGFloat = 16
     public static let radiusFeature: CGFloat = 24
   }
+  public enum Spacing {
+    public static let spacingXs: CGFloat = 4
+    public static let spacingSm: CGFloat = 8
+    public static let spacingMd: CGFloat = 12
+    public static let spacingLg: CGFloat = 16
+    public static let spacingXl: CGFloat = 24
+    public static let spacingXxl: CGFloat = 32
+  }
   public enum Duration {
     public static let durationFast: TimeInterval = 0.12
     public static let durationStandard: TimeInterval = 0.2

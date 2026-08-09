@@ -34,6 +34,7 @@ in Xcode / `project.yml`, then:
 import CurioTokens
 Color(...) // e.g. CurioTokens.Colors.brandCurioLight400
 CurioTokens.Radius.radiusMd     // CGFloat corner radius
+CurioTokens.Spacing.spacingMd   // CGFloat spacing (v1.2.0+)
 CurioTokens.Duration.durationStandard  // TimeInterval for animations
 ```
 

@@ -38,6 +38,12 @@
   --radius-curio-md: 8px;
   --radius-curio-lg: 16px;
   --radius-curio-feature: 24px;
+  --spacing-curio-xs: 4px;
+  --spacing-curio-sm: 8px;
+  --spacing-curio-md: 12px;
+  --spacing-curio-lg: 16px;
+  --spacing-curio-xl: 24px;
+  --spacing-curio-xxl: 32px;
   --color-curio-status-success-fill: #2BB673;
   --color-curio-status-success-ink: #0B0D12;
   --color-curio-status-success-on-dark: #4FD08F;

@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.2.0 — 2026-08-10
+
+CC-2's iOS consistency slice requested an explicit `Spacing` accessor. v1.1.0's changelog note
+("spacing was never a token on either platform... nothing to add") reflected that web has no
+*custom* spacing layer — it uses Tailwind v4's default 4px-based scale directly, unmodified. That
+call gets reversed here: iOS still needs an explicit vocabulary regardless of whether web's is
+implicit, so this formalizes web's actual most-frequently-used spacing values (by usage count
+across `app/`, `components/`, `lib/`) as named tokens, the same "extract what's shipping, don't
+invent" discipline used for radius/status. Not a redesign — the six values below already are the
+app's real spacing rhythm.
+
+- Added `src/tokens/spacing.json`: `xs` (4px) · `sm` (8px) · `md` (12px, the single most-used
+  value in the app) · `lg` (16px) · `xl` (24px) · `xxl` (32px).
+- New Swift `CurioTokens.Spacing` enum (`spacingXs`...`spacingXxl`, `CGFloat`).
+- New CSS `--spacing-curio-*` custom properties in `dist/curio-brand.css`, registered as real
+  Tailwind v4 theme vars (`@theme`) — so web can *optionally* adopt `p-curio-md` etc. for the same
+  semantic vocabulary as iOS, though nothing in pokemon-tool currently requires it (existing raw
+  Tailwind spacing utilities are unaffected either way).
+
+No breaking changes — purely additive. Existing `Colors`/`Radius`/`Duration`/`Fonts` consumers are
+unaffected.
+
 ## 1.1.0 — 2026-08-09
 
 WORK-BACKLOG.md Packet CC-2 slice 0 (`curio-shared`) — checked whether v1.0.0 already exposed
