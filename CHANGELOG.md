@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.0.0 — 2026-08-10
+
+**Breaking (rename only — zero known real consumers, see below).** iOS-cowork follow-up on CC-2
+found that web renders radii almost entirely via raw Tailwind `rounded-*` classes rather than
+`rounded-curio-*`, so a real-usage audit of `@curio/tokens`' own radius scale had never actually
+been done. Results: `rounded-xl` (12px) is the single most-used named radius class app-wide (179
+uses) — more than every existing tier except the old `md` — and had no tier at all. The old `sm`
+(4px) has zero real-usage evidence anywhere in the app today.
+
+Rather than bolt an awkwardly-named fifth tier onto the existing scale, inserted 12px into a clean
+ascending 4-multiple ladder (still honouring the original "Ben's 4-multiple override" design
+decision — 12 is 4×3):
+
+- `radius.xs` = 4px (was `sm` — renamed, value unchanged)
+- `radius.sm` = 8px (was `md` — renamed, value unchanged; the actual most-used real value, 190
+  combined uses via `rounded-lg` + arbitrary `[8px]`)
+- `radius.md` = 12px (**new** — was previously unrepresented; 179 real uses via `rounded-xl`)
+- `radius.lg` = 16px (unchanged)
+- `radius.feature` = 24px (unchanged)
+
+This is a rename for `xs`/`sm`, which is breaking in principle — but `grep -r "rounded-curio-"` /
+`Radius\.(sm|md)\b` across `pokemon-tool` returns zero real usages today, so the practical impact
+is nil. Bumped major out of semver discipline rather than hiding a rename in a minor release, not
+because anything currently shipping actually breaks.
+
+Spacing (added in 1.2.0) was deliberately left as-is in this same follow-up — its 6-tier curation
+was already a considered simplification of real usage, not an omission the way the radius gap was.
+
 ## 1.2.0 — 2026-08-10
 
 CC-2's iOS consistency slice requested an explicit `Spacing` accessor. v1.1.0's changelog note

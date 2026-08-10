@@ -55,8 +55,9 @@ public enum CurioTokens {
     public static let blurGlowSm: CGFloat = 24
     public static let blurGlowMd: CGFloat = 48
     public static let blurGlowLg: CGFloat = 72
-    public static let radiusSm: CGFloat = 4
-    public static let radiusMd: CGFloat = 8
+    public static let radiusXs: CGFloat = 4
+    public static let radiusSm: CGFloat = 8
+    public static let radiusMd: CGFloat = 12
     public static let radiusLg: CGFloat = 16
     public static let radiusFeature: CGFloat = 24
   }

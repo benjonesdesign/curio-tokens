@@ -34,8 +34,9 @@
   --color-curio-fallback-accent-evidence-text: #4c3fb7;
   --color-curio-fallback-accent-attention-text: #7b4c13;
   --color-curio-focus-ring: #e7a85c;
-  --radius-curio-sm: 4px;
-  --radius-curio-md: 8px;
+  --radius-curio-xs: 4px;
+  --radius-curio-sm: 8px;
+  --radius-curio-md: 12px;
   --radius-curio-lg: 16px;
   --radius-curio-feature: 24px;
   --spacing-curio-xs: 4px;
