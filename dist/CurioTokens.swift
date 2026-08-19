@@ -79,8 +79,9 @@ public enum CurioTokens {
     public static let brandTypeDisplay = "Plus Jakarta Sans"
     public static let brandTypeProduct = "Plus Jakarta Sans"
     public static let brandTypeEvidence = "IBM Plex Mono"
-    public static let fontDisplay = "Plus Jakarta Sans"
-    public static let fontProduct = "Plus Jakarta Sans"
-    public static let fontEvidence = "IBM Plex Mono"
+    public static let fontIosDisplay = "PlusJakartaSans-Regular"
+    public static let fontIosProduct = "PlusJakartaSans-Regular"
+    public static let fontIosEvidence = "IBMPlexMono-Regular"
+    public static let fontIosEvidenceMedium = "IBMPlexMono-Medium"
   }
 }
