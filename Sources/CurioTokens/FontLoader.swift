@@ -10,9 +10,15 @@
 // Colors/Radius/Duration/Fonts(names) to Swift — the real gap was font FILES, not a missing
 // accessor. Bundled here rather than adding a new token category.
 //
-// Files: PlusJakartaSans-Variable.ttf (variable font, weights 200–800 via the `wght` axis — covers
-// every weight pokemon-tool's `next/font` config requests: 400/500/600/700/800) and
-// IBMPlexMono-Regular.ttf / IBMPlexMono-Medium.ttf (static weights — matches web's 400/500).
+// Files: PlusJakartaSans-{Regular,Medium,SemiBold,Bold,ExtraBold}.ttf and
+// IBMPlexMono-{Regular,Medium}.ttf — static per-weight files, each with its own real,
+// individually-addressable PostScript name (see type-ios.json). Jakarta was originally bundled as
+// a single VARIABLE font (PlusJakartaSans-Variable.ttf, wght 200–800), which covers every weight
+// web's `next/font` config requests — but iOS's Font.custom(name:) can only address a variable
+// font's base/default instance (no per-weight PostScript name exists in its fvar table), so
+// switched to static files for iOS specifically once curio-capture-ios's actual weight usage was
+// audited (91 call sites: .medium/.semibold/.bold/.heavy) — scoped to exactly those weights, not
+// the full 7-weight family. Web is unaffected; it never consumed this SwiftPM resource bundle.
 // Both typefaces are SIL Open Font License 1.1 (see licenses/ at the repo root) — free to bundle
 // and redistribute.
 
@@ -26,7 +32,11 @@ extension CurioTokens {
     /// idempotent, safe to call more than once (a "duplicate name" registration error is ignored,
     /// not thrown, since that just means a previous call already succeeded).
     public static func registerFonts() {
-        let names = ["PlusJakartaSans-Variable", "IBMPlexMono-Regular", "IBMPlexMono-Medium"]
+        let names = [
+            "PlusJakartaSans-Regular", "PlusJakartaSans-Medium", "PlusJakartaSans-SemiBold",
+            "PlusJakartaSans-Bold", "PlusJakartaSans-ExtraBold",
+            "IBMPlexMono-Regular", "IBMPlexMono-Medium",
+        ]
         for name in names {
             guard let url = Bundle.module.url(forResource: name, withExtension: "ttf", subdirectory: "Fonts") else {
                 assertionFailure("CurioTokens.registerFonts: \(name).ttf not found in the resource bundle")

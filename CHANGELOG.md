@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.1.0 — 2026-08-19
+
+**Additive, closes the weight-differentiation gap v3.0.0 flagged.** Plus Jakarta Sans was bundled
+as a single variable font (`PlusJakartaSans-Variable.ttf`) whose named instances had no
+individually-addressable PostScript name — only the Regular instance resolved via `Font.custom`.
+Replaced it with 5 static per-weight files (Ben supplied the official Google Fonts static
+archive), scoped to exactly the weights `curio-capture-ios`'s `Font.brand(weight:)` call sites
+actually request (91 call sites audited: `.medium`/`.semibold`/`.bold`/`.heavy`) — not the full
+7-weight family, no italics (none used):
+
+- `fontIosProductMedium` = `"PlusJakartaSans-Medium"`
+- `fontIosProductSemiBold` = `"PlusJakartaSans-SemiBold"` (the most-used override, 59 sites)
+- `fontIosProductBold` = `"PlusJakartaSans-Bold"`
+- `fontIosProductExtraBold` = `"PlusJakartaSans-ExtraBold"` (SwiftUI's `.heavy` = the 800 weight
+  class = Jakarta's ExtraBold)
+
+All 5 PostScript names verified against each bundled `.ttf`'s own embedded name table (fontTools),
+same discipline as v3.0.0. `fontIosProduct`/`fontIosDisplay`/`fontIosEvidence`/
+`fontIosEvidenceMedium` are unchanged (same values, now backed by a static Regular file instead of
+a variable font's default instance — no consumer-visible difference). Resource bundle grows by
+~300KB (5 static files vs. 1 variable file) — a reasonable trade for weights that actually render
+distinctly. Web/CSS output is, again, byte-identical.
+
 ## 3.0.0 — 2026-08-19
 
 **Breaking on iOS only (web/CSS untouched).** SwiftUI's `Font.custom(name:)` needs a font's
