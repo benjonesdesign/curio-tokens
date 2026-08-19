@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.0.0 — 2026-08-19
+
+**Breaking on iOS only (web/CSS untouched).** SwiftUI's `Font.custom(name:)` needs a font's
+PostScript name, not a CSS family name — `CurioTokens.Fonts.fontDisplay/fontProduct/fontEvidence`
+held CSS family-name strings ("Plus Jakarta Sans", "IBM Plex Mono"), so `Font.custom` calls using
+them (`curio-capture-ios`'s `Font.brand`/`Font.brandMono`) silently failed to resolve and fell
+back to system San Francisco — no error, no warning, brand fonts likely never actually rendering
+on iOS.
+
+- Removed `fontDisplay`/`fontProduct`/`fontEvidence` from the Swift output — they were actively
+  wrong for `Font.custom` use and this removes the footgun rather than leaving it alongside a
+  fix. `brandTypeDisplay`/`brandTypeProduct`/`brandTypeEvidence` (raw `brand.type.*`, unused for
+  `Font.custom` today) are untouched.
+- Added real PostScript-name tokens, verified against each bundled font file's own embedded name
+  table (fontTools), not guessed: `fontIosDisplay`/`fontIosProduct` = `"PlusJakartaSans-Regular"`,
+  `fontIosEvidence` = `"IBMPlexMono-Regular"`, `fontIosEvidenceMedium` = `"IBMPlexMono-Medium"`.
+  New source: `src/tokens/type-ios.json`. Never emitted into web CSS (a PostScript name is
+  meaningless there).
+- **Known gap, deliberately not papered over:** the bundled Plus Jakarta Sans is a single
+  *variable* font (`PlusJakartaSans-Variable.ttf`) whose named instances (Medium/SemiBold/Bold/
+  etc.) have no individually-addressable PostScript name — confirmed via the font's own `fvar`
+  table (`postscriptNameID` is unset on every non-default instance). Only the Regular (wght=400)
+  instance is resolvable via `Font.custom` today. `curio-capture-ios` calls `Font.brand(weight:
+  .semibold/.bold/...)` extensively (91 call sites) and `Font.brandMono(weight: .semibold)` once
+  — none of those will render as a genuinely different weight until either (a) static per-weight
+  TTFs are added + tokened the same way as IBM Plex Mono, or (b) the Swift `Font` extension is
+  rewritten to select the variable font's `wght` axis via `UIFontDescriptor`/`CTFont` variation
+  attributes. Tracked as a follow-up, not solved by this change.
+
 ## 2.0.0 — 2026-08-10
 
 **Breaking (rename only — zero known real consumers, see below).** iOS-cowork follow-up on CC-2
