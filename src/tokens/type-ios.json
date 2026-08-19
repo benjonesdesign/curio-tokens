@@ -1,22 +1,38 @@
 {
-  "$description": "iOS-only PostScript-name font tokens. SwiftUI's Font.custom(name:) needs a font's actual PostScript name (the string embedded in the font binary's 'name' table, ID 6) — NOT a CSS family name. font.* in type.json holds CSS family-name stacks (correct for web, WRONG for Font.custom — passing 'Plus Jakarta Sans' to Font.custom silently resolves to nothing and SwiftUI falls back to system San Francisco with no error). This file is the separate iOS-only counterpart; web's family-name value is untouched. Scoped to exactly the PostScript names that exist as real, individually-addressable fonts bundled in Sources/CurioTokens/Fonts/ — verified against each file's embedded name table (fontTools), not guessed. IMPORTANT CONSTRAINT: Plus Jakarta Sans ships here as a single VARIABLE font (PlusJakartaSans-Variable.ttf, wght axis 200-800) whose fvar named instances (Medium/SemiBold/Bold/etc.) all have postscriptNameID=0xFFFF — none of them has an individually-addressable PostScript name. Only the base/default instance (PlusJakartaSans-Regular, wght=400) is resolvable via Font.custom today. Requesting other Jakarta weights via SwiftUI's .weight() modifier on a Font.custom instance does NOT reliably select a different variable-font instance — that needs either (a) additional static per-weight TTF files bundled + their own PostScript-name tokens, or (b) CTFont/UIFontDescriptor variation-axis selection in the Swift consumer, neither of which this token-only change does. Tracked as a follow-up, not silently worked around here.",
+  "$description": "iOS-only PostScript-name font tokens. SwiftUI's Font.custom(name:) needs a font's actual PostScript name (the string embedded in the font binary's 'name' table, ID 6) — NOT a CSS family name. font.* in type.json holds CSS family-name stacks (correct for web, WRONG for Font.custom). This file is the separate iOS-only counterpart; web's family-name value is untouched. Every value here is verified against its bundled .ttf's embedded name table (fontTools), not guessed. Plus Jakarta Sans is bundled as separate static per-weight files (Regular/Medium/SemiBold/Bold/ExtraBold) — scoped to exactly the weights curio-capture-ios's Font.brand(weight:) call sites actually request (an earlier variable-font attempt had no individually-addressable PostScript name per weight; see CHANGELOG.md v3.0.0/v3.1.0 for the history). IBM Plex Mono ships Regular + Medium only — the only weights curio-capture-ios's Font.brandMono(weight:) requests.",
   "font-ios": {
     "$type": "string",
     "display": {
       "$value": "PlusJakartaSans-Regular",
-      "$description": "Brand-display face, iOS. Same single-instance constraint as product below."
+      "$description": "Brand-display face, iOS, Regular weight. Unused by curio-capture-ios today (kept for parity with product/evidence, same as the pre-existing fontDisplay it replaces) — add weight variants here if/when a real call site needs them, not speculatively."
     },
     "product": {
       "$value": "PlusJakartaSans-Regular",
-      "$description": "UI/body/figures face, iOS. Only the Regular (wght=400) instance of the bundled variable font is individually addressable — see the file-level $description for why heavier weights (.semibold/.bold, used extensively by Font.brand(weight:) call sites in curio-capture-ios) aren't distinctly resolvable yet."
+      "$description": "UI/body/figures face, iOS, Regular weight."
+    },
+    "productMedium": {
+      "$value": "PlusJakartaSans-Medium",
+      "$description": "UI/body/figures face, iOS, Medium weight."
+    },
+    "productSemiBold": {
+      "$value": "PlusJakartaSans-SemiBold",
+      "$description": "UI/body/figures face, iOS, SemiBold weight — the most-used weight override in curio-capture-ios (59 call sites)."
+    },
+    "productBold": {
+      "$value": "PlusJakartaSans-Bold",
+      "$description": "UI/body/figures face, iOS, Bold weight."
+    },
+    "productExtraBold": {
+      "$value": "PlusJakartaSans-ExtraBold",
+      "$description": "UI/body/figures face, iOS, ExtraBold weight — maps to SwiftUI's Font.Weight.heavy (both are the 800 weight class)."
     },
     "evidence": {
       "$value": "IBMPlexMono-Regular",
-      "$description": "Evidence/identifier face (card no., cert, SKU), iOS Regular weight — a real static font file, confirmed via its embedded PostScript name."
+      "$description": "Evidence/identifier face (card no., cert, SKU), iOS Regular weight."
     },
     "evidenceMedium": {
       "$value": "IBMPlexMono-Medium",
-      "$description": "Evidence/identifier face, iOS Medium weight — the only other IBM Plex Mono weight bundled as a static file today (no SemiBold/Bold files exist yet, despite Font.brandMono(weight: .semibold) being called in curio-capture-ios)."
+      "$description": "Evidence/identifier face, iOS Medium weight."
     }
   }
 }
