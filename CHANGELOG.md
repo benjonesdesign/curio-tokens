@@ -1,5 +1,39 @@
 # Changelog
 
+## 3.2.0 — 2026-08-26
+
+**Adds Android output — the same generator, a third platform.** Two new Style Dictionary formats
+in `build.mjs` alongside the existing `curio/css-theme`/`curio/swift`:
+
+- `curio/compose` → `src/main/kotlin/com/curio/tokens/CurioTokens.kt` (+ a `dist/CurioTokens.kt`
+  reference copy, mirroring `dist/CurioTokens.swift`). Emits **raw values** — packed-ARGB `Long`
+  for color, `Float` for dp, `Long` milliseconds for duration — not
+  `androidx.compose.ui.graphics.Color`/`Dp` directly, so this stays a plain `kotlin("jvm")` module
+  with zero Compose/Android-SDK dependency to build (same posture as `@curio/contracts`' Kotlin
+  target: JitPack needs only a JDK). Consumer wraps at the call site:
+  `Color(CurioTokens.Colors.surfaceBase)`, `CurioTokens.Radius.radiusMd.dp`.
+- `curio/android-colors-xml` / `curio/android-dimens-xml` → `dist/android/values/{colors,dimens}.xml`
+  — standard Android resource XML for a non-Compose (View/XML-layout) consumer. Lower fidelity
+  than the Kotlin target: there's no "pin a git tag, get resources merged automatically" mechanism
+  for bare resource XML without this becoming a real `com.android.library` AAR (which would need
+  the Android SDK just to build this repo) — so these are generated, committed files the Android
+  app copies into its own `res/values/` at each version bump, same posture as how a web consumer
+  references `dist/curio-brand.css` directly.
+- New root-level Gradle project (`build.gradle.kts`, `settings.gradle.kts`, Gradle 8.10 wrapper),
+  consumed via JitPack (`com.github.benjonesdesign:curio-tokens:vX.Y.Z`) — the direct Android-
+  Gradle equivalent of the npm `github:` dependency and the SwiftPM git-tag pin already in use.
+- **Known gap, not silently worked around:** font *files* aren't bundled for Android the way
+  `Sources/CurioTokens/Fonts/*.ttf` are for iOS, so `CurioTokens.Fonts` doesn't exist yet on the
+  Kotlin side — Android has no PostScript-name equivalent to emit today, and a real fix means
+  bundling actual font assets + wiring a Compose `FontFamily`, which is a separate, larger piece of
+  work. This is the same wiring gap the previous session flagged for iOS's own `brand.type.*`
+  tokens ("tokens still aren't wired into iOS either") — Android inherits it too, one platform
+  later, rather than a new problem introduced here.
+- `npm run check` now also diffs `src/main/kotlin` for drift, not just `dist`/`Sources`.
+- `src/test/kotlin/com/curio/tokens/CurioTokensTest.kt` (new) — locks the packed-ARGB byte layout
+  (opaque tokens carry a full `FF` alpha byte, translucent tokens don't get silently forced
+  opaque) and that Radius/Spacing/Duration values are directly usable as Compose dp/ms.
+
 ## 3.1.0 — 2026-08-19
 
 **Additive, closes the weight-differentiation gap v3.0.0 flagged.** Plus Jakarta Sans was bundled

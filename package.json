@@ -1,7 +1,7 @@
 {
   "name": "@curio/tokens",
-  "version": "3.1.0",
-  "description": "Curio brand design tokens — single source, compiled to app/website CSS and an iOS SwiftPM package via Style Dictionary.",
+  "version": "3.2.0",
+  "description": "Curio brand design tokens — single source, compiled to app/website CSS, an iOS SwiftPM package, and an Android Kotlin/Compose library via Style Dictionary.",
   "type": "module",
   "main": "dist/curio-brand.css",
   "exports": {
@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "node build.mjs",
-    "check": "node build.mjs && git diff --exit-code -- dist Sources || (echo '\\n✗ Committed outputs are stale vs src/tokens — run: npm run build' && exit 1)"
+    "check": "node build.mjs && git diff --exit-code -- dist Sources src/main/kotlin || (echo '\\n✗ Committed outputs are stale vs src/tokens — run: npm run build' && exit 1)"
   },
   "devDependencies": {
     "style-dictionary": "^4.3.0"
