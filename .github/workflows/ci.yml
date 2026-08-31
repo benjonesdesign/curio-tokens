@@ -25,12 +25,15 @@ jobs:
       - run: npm run check
 
   swift:
-    # The package declared platforms: [.iOS(.v17)] only, so `swift build` targeted macOS with no
-    # declared minimum and failed on SwiftUI.Color (macOS 10.15+). It builds correctly FOR iOS —
-    # which is what iOS consumes — but could not be built or checked anywhere else, which is part
-    # of why it never was.
-    runs-on: ubuntu-latest
-    container: swift:6.0
+    # macOS, not Linux. This package exposes SwiftUI.Color, and SwiftUI does not exist on Linux —
+    # so a swift:6.0 container cannot build it at all, whatever the platforms declaration says.
+    # An Apple-platform package has to be built on an Apple platform. (Free for a public repo.)
+    #
+    # Package.swift also gains .macOS(.v14): it declared platforms: [.iOS(.v17)] only, so
+    # `swift build` targeted macOS with NO declared minimum and failed on SwiftUI.Color, which is
+    # available from 10.15. It always built correctly FOR iOS — which is what iOS consumes — but
+    # could not be built or checked anywhere else, and that is part of why it never was.
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - run: swift build
