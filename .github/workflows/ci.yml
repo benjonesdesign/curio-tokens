@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # This repo had NO CI AT ALL until 2026-08-31, while shipping three generated outputs (dist,
+  # Sources/CurioTokens, src/main/kotlin) to three platforms. `npm run check` — which regenerates
+  # from src/tokens, fails on any drift, AND runs the WCAG AA contrast gate on every colour pair —
+  # existed and ran nowhere. A gate nobody runs is a gate that has never gated anything.
+  #
+  # Found by sweeping the question that came out of curio-contracts: what else do we generate that
+  # nothing compiles? There it was one missing job; here it was every job.
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      # Regenerates and diffs the committed output, then runs the AA gate.
+      - run: npm run check
+
+  swift:
+    # macOS, not Linux. This package exposes SwiftUI.Color, and SwiftUI does not exist on Linux —
+    # so a swift:6.0 container cannot build it at all, whatever the platforms declaration says.
+    # An Apple-platform package has to be built on an Apple platform. (Free for a public repo.)
+    #
+    # Package.swift also gains .macOS(.v14): it declared platforms: [.iOS(.v17)] only, so
+    # `swift build` targeted macOS with NO declared minimum and failed on SwiftUI.Color, which is
+    # available from 10.15. It always built correctly FOR iOS — which is what iOS consumes — but
+    # could not be built or checked anywhere else, and that is part of why it never was.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift build
