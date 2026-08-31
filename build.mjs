@@ -406,8 +406,36 @@ for (const [label, fg, bg] of uiChecks) {
   console.log(`  ${r >= 3 ? "✓" : "•"} ${label.padEnd(30)} ${r.toFixed(2)}${r < 3 ? "  (use for large/semibold + paper label)" : ""}`);
 }
 
+// ── COVERAGE: every status/accent/focus token is IN a check ──────────────────
+//
+// `aaChecks` and `uiChecks` are hand-written lists of specific token names. Today they happen to
+// cover all 13 status/accent/focus tokens — but a NEW colour joins the palette without joining the
+// gate, silently, and the build stays green. "It goes through the gate when it lands" would be a
+// hope, not a mechanism.
+//
+// That matters right now: three status colours (low-confidence, ready, listed) are designed and
+// not yet in this package. They were verified by hand, once, by someone who did not know this gate
+// existed. When they land, this makes the build FAIL until they are in a check — which is the
+// difference between a gate they pass and a gate they were put through.
+//
+// Foreground-only by design: a `-fill` is a background and is checked as the `bg` side of its
+// ink pairing, so it counts as covered by appearing in either position.
+const covered = new Set([...aaChecks, ...uiChecks].flatMap(([, fg, bg]) => [fg, bg]));
+const uncovered = Object.keys(val)
+  .filter((n) => /^curio-(status|accent|focus)-/.test(n))
+  .filter((n) => !covered.has(val[n]));
+
+if (uncovered.length > 0) {
+  console.error(`\n✗ ${uncovered.length} colour token(s) are in the palette but in NO contrast check:`);
+  for (const n of uncovered) console.error(`    --color-${n}: ${val[n]}`);
+  console.error("  Add each to aaChecks (text/ink, ≥4.5) or uiChecks (graphical, ≥3.0) in build.mjs.");
+  console.error("  Which list is a real decision: 4.5 is for anything read as text, 3.0 for a dot,");
+  console.error("  bar or icon. Putting a label colour in uiChecks passes a gate it should not.");
+  failed++;
+}
+
 if (failed > 0) {
   console.error(`\n✗ ${failed} AA contrast check(s) failed — fix the token values before shipping.`);
   process.exit(1);
 }
-console.log("\n✓ All AA gate checks pass.");
+console.log(`\n✓ All AA gate checks pass, and all ${Object.keys(val).filter((n) => /^curio-(status|accent|focus)-/.test(n)).length} status/accent/focus tokens are covered by one.`);
