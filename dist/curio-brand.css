@@ -14,6 +14,12 @@
   --color-curio-brand-line-on-dark: rgba(243, 240, 232, 0.14);
   --color-curio-brand-line-on-light: rgba(11, 13, 18, 0.13);
   --color-curio-brand-index-amber-on-dark: rgba(231, 168, 92, 0.38);
+  --transition-duration-curio-fast: 120ms;
+  --transition-duration-curio-standard: 200ms;
+  --transition-duration-curio-reveal: 400ms;
+  --transition-duration-curio-ambient: 8000ms;
+  --ease-curio-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-curio-exit: cubic-bezier(0.4, 0, 1, 1);
   --color-curio-surface-base: #0b0d12;
   --color-curio-surface-raised: #171a2b;
   --color-curio-surface-sunken: #07090D;

@@ -17,7 +17,7 @@
 
 import StyleDictionary from "style-dictionary";
 import { cleanName, themeName, themeVar, isIosFont, isColor, isRadius, isSpacing, isFont,
-         isTypeSize, isLeading, isWeight, scalesWithUserFont } from "./lib-names.mjs";
+         isTypeSize, isLeading, isWeight, scalesWithUserFont, isDuration, isEasing } from "./lib-names.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -94,7 +94,7 @@ StyleDictionary.registerFormat({
     // Tailwind utilities and is web-only by construction; `--curio-type-*` is the name CONVENTIONS,
     // every component spec and both mobile lanes already cite, and it is the cross-platform one.
     // Both come from the same source token, so they cannot drift.
-    const alsoRoot = (t) => isTypeSize(t) || isLeading(t) || isWeight(t);
+    const alsoRoot = (t) => isTypeSize(t) || isLeading(t) || isWeight(t) || isDuration(t) || isEasing(t);
     const root = all.filter((t) => !themeVar(t) || alsoRoot(t))
       .map((t) => `  --${cleanName(t.path)}: ${tv(t)};`).join("\n");
     return `${header}\n@theme {\n${theme}\n}\n\n:root {\n${root}\n}\n`;

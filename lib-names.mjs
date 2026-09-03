@@ -48,7 +48,9 @@ export const isColor  = (t) => (t.$type ?? t.type) === "color";
 export const isRadius  = (t) => t.path[0] === "radius";
 export const isSpacing = (t) => t.path[0] === "spacing";
 export const isFont    = (t) => t.path[0] === "font" && t.path[1] !== undefined && t.path.length === 2 && ["display", "product", "evidence"].includes(t.path[1]);
-export const themeVar  = (t) => isColor(t) || isRadius(t) || isSpacing(t) || isFont(t) || isTypeSize(t) || isLeading(t) || isWeight(t);
+export const isDuration = (t) => (t.$type ?? t.type) === "duration";
+export const isEasing   = (t) => (t.$type ?? t.type) === "cubicBezier";
+export const themeVar  = (t) => isColor(t) || isRadius(t) || isSpacing(t) || isFont(t) || isTypeSize(t) || isLeading(t) || isWeight(t) || isDuration(t) || isEasing(t);
 // iOS-only PostScript-name tokens (type-ios.json) — Swift output only, never web CSS. A
 // PostScript name ("PlusJakartaSans-Regular") is meaningless as a CSS custom property; emitting
 // it would just be dead, confusing output for web consumers.
@@ -66,6 +68,12 @@ export function themeName(t) {
   if (isTypeSize(t)) return `--text-curio-${t.path.slice(1).join("-")}`;
   if (isLeading(t))  return `--leading-curio-${t.path.slice(1).join("-")}`;
   if (isWeight(t))   return `--font-weight-curio-${t.path.slice(1).join("-")}`;
+  // FOUNDATIONS §3 records these as "used zero times", and the reason was packaging, not adoption:
+  // they sat in :root, and Tailwind v4 generates utilities only from @theme, so `duration-curio-fast`
+  // and `ease-curio-reveal` did not exist as classes. Note the namespace is --transition-duration-*,
+  // not --duration-*; a token under the wrong namespace is dropped SILENTLY, no error, no class.
+  if (isDuration(t)) return `--transition-duration-curio-${t.path.slice(3).join("-")}`;
+  if (isEasing(t))   return `--ease-curio-${t.path.slice(3).join("-")}`;
   return `--${n}`;
 }
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.4.0 — 2026-09-03
+
+**The motion tokens become reachable.** They have shipped since v1.x and were used **zero times**,
+and the reason was packaging rather than adoption: the four durations and two easings sat in the
+`:root` block, and Tailwind v4 generates utilities only from `@theme` — so `duration-curio-fast` and
+`ease-curio-reveal` did not exist as classes at all. Every component spec asking for
+`--curio-duration-fast` was asking for something the web lane could not write.
+
+Note the namespace is `--transition-duration-*`, not `--duration-*`. A token under the wrong one is
+dropped **silently** — no error, no class, nothing in the build output to say a token was ignored.
+Verified by compiling against the consuming app's own tailwindcss 4.3.2.
+
+Emitted alongside the canonical `--curio-duration-*` / `--curio-ease-*` names from the same source
+tokens, exactly as the type scale is. Mobile output is unchanged.
+
 ## 3.3.0 — 2026-09-03
 
 **The type scale, and the three product statuses.** Purely additive: 48 new CSS declarations, no
