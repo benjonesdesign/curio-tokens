@@ -338,6 +338,19 @@ await sd.buildAllPlatforms();
 console.log("✓ Tokens built → dist/curio-brand.css, dist/CurioTokens.swift, Sources/CurioTokens/CurioTokens.swift, src/main/kotlin/com/curio/tokens/CurioTokens.kt, dist/android/values/{colors,dimens}.xml");
 
 // ── WCAG contrast validation (AA gate) ───────────────────────────────────────
+//
+// BLIND SPOTS — what a green run of this gate does NOT establish (ADR 0024, 2026-09-02):
+//   1. Anything outside status/accent/focus. Surfaces, text, lines and the brand ramp are in no
+//      check and the coverage guard does not require them to be.
+//   2. That a listed pairing is the pairing the product actually draws. The lists are hand-written:
+//      a colour is measured where the list says, not where it is rendered.
+//   3. Type size. AA 4.5 is assumed for every entry; a genuinely large/semibold label needs only
+//      3.0, and this gate takes no size input, so it is strict in a way it cannot justify per-entry.
+//   4. The pill alphas below are a SECOND COPY of a design decision that lives in
+//      canon/design/components/CONVENTIONS.md. There is no opacity token for them, so if the design
+//      changes one this gate keeps measuring the old surface and stays green.
+//   5. uiChecks is REPORT-ONLY. A graphical element below 3.0 prints a bullet and does not fail
+//      the build. Only aaChecks and the coverage guard can turn this red.
 // Validate the ACTUAL generated CSS (what every consumer imports), not an intermediate.
 const { readFileSync } = await import("node:fs");
 const css = readFileSync(`${DIST}curio-brand.css`, "utf8");
@@ -369,61 +382,101 @@ function ratio(fgc, bgc) {
   return (a + 0.05) / (b + 0.05);
 }
 
-const base = val["curio-surface-base"], raised = val["curio-surface-raised"];
+const base = "curio-surface-base", raised = "curio-surface-raised";
+
+// ── The tinted pill ──────────────────────────────────────────────────────────
+// A status LABEL does not sit on the page background. It sits on a pill filled with its own colour
+// at low alpha, over base or raised — so the surface it is read against is lighter than `base` and
+// the ratio is WORSE than an on-dark/base check reports. Checking only against base measures a
+// case the product does not render.
+//
+// The alphas are design decisions and currently live in canon/design (CONVENTIONS §1) as well as
+// here. That duplication is a real gap: there is no opacity token for them, so this is a second
+// copy that can drift. Recorded rather than hidden — the fix is a token, and it is not this change.
+const PILL_ALPHA = { "low-confidence": 0.14, ready: 0.14, listed: 0.16, "needs-decision": 0.15 };
+
+// A check side is either a TOKEN NAME (a string that exists in `val`) or a computed colour, which
+// is written `{ computed: <css>, from: <label> }`. The distinction is what makes coverage
+// meaningful: only token names count as covered, and a computed pill surface is not a token.
+const T = (name) => name;
+const pillOf = (tokenName, alpha, bgName) => {
+  const bg = parseRGB(val[bgName]).slice(0, 3);
+  const fg = parseRGB(val[tokenName]).slice(0, 3);
+  const c = composite([...fg, alpha], bg);
+  return { computed: `rgb(${c[0]}, ${c[1]}, ${c[2]})`, from: `${tokenName} @ ${alpha} over ${bgName}` };
+};
+const resolve_ = (side) => (typeof side === "string" ? val[side] : side.computed);
+
 // Hard AA gate (≥4.5): status pairings + primary text.
 const aaChecks = [
-  ["status success ink-on-fill", val["curio-status-success-ink"], val["curio-status-success-fill"]],
-  ["status warning ink-on-fill", val["curio-status-warning-ink"], val["curio-status-warning-fill"]],
-  ["status danger ink-on-fill",  val["curio-status-danger-ink"],  val["curio-status-danger-fill"]],
-  ["status success on-dark/base", val["curio-status-success-on-dark"], base],
-  ["status warning on-dark/base", val["curio-status-warning-on-dark"], base],
-  ["status danger on-dark/base",  val["curio-status-danger-on-dark"],  base],
-  ["text primary / base",         val["curio-text-primary"], base],
-  ["text primary / raised",       val["curio-text-primary"], raised],
+  ["status success ink-on-fill", T("curio-status-success-ink"), T("curio-status-success-fill")],
+  ["status warning ink-on-fill", T("curio-status-warning-ink"), T("curio-status-warning-fill")],
+  ["status danger ink-on-fill",  T("curio-status-danger-ink"),  T("curio-status-danger-fill")],
+  ["status success on-dark/base", T("curio-status-success-on-dark"), T(base)],
+  ["status warning on-dark/base", T("curio-status-warning-on-dark"), T(base)],
+  ["status danger on-dark/base",  T("curio-status-danger-on-dark"),  T(base)],
+  ["text primary / base",         T("curio-text-primary"), T(base)],
+  ["text primary / raised",       T("curio-text-primary"), T(raised)],
 ];
 // Report-only (UI/graphical ≥3.0): accents + focus + secondary text.
 const uiChecks = [
-  ["accent ready / base",      val["curio-accent-ready"], base],
-  ["accent evidence / base",   val["curio-accent-evidence"], base],
-  ["accent completion / base", val["curio-accent-completion"], base],
-  ["focus ring / base",        val["curio-focus-ring"], base],
-  ["text secondary / base",    val["curio-text-secondary"], base],
+  ["accent ready / base",      T("curio-accent-ready"), T(base)],
+  ["accent evidence / base",   T("curio-accent-evidence"), T(base)],
+  ["accent completion / base", T("curio-accent-completion"), T(base)],
+  ["focus ring / base",        T("curio-focus-ring"), T(base)],
+  ["text secondary / base",    T("curio-text-secondary"), T(base)],
 ];
+
+// The product statuses land as LABELS on their own tinted pill, so they are checked there — over
+// `raised`, the worse of the two surfaces and therefore the one that decides.
+for (const name of ["low-confidence", "ready", "listed", "needs-decision"]) {
+  const t = `curio-status-product-${name}`;
+  if (val[t]) aaChecks.push([`status-product ${name} on its pill`, T(t), pillOf(t, PILL_ALPHA[name], raised)]);
+}
+// `sold` is the one FILLED pill in the product: its text sits ON the colour rather than beside it,
+// which is a different pairing from the on-dark check its hex would otherwise borrow coverage from.
+if (val["curio-status-product-sold"] && val["curio-text-on-accent"]) {
+  aaChecks.push(["status-product sold — text on FILLED pill",
+    T("curio-text-on-accent"), T("curio-status-product-sold")]);
+}
 
 let failed = 0;
 console.log("\nWCAG contrast (dark) — AA gate ≥4.5:");
 for (const [label, fg, bg] of aaChecks) {
-  if (!fg || !bg) { console.log(`  ? ${label}: missing token`); failed++; continue; }
-  const r = ratio(fg, bg);
+  const f = resolve_(fg), b = resolve_(bg);
+  if (!f || !b) { console.log(`  ? ${label}: missing token`); failed++; continue; }
+  const r = ratio(f, b);
   const ok = r >= 4.5;
   if (!ok) failed++;
-  console.log(`  ${ok ? "✓" : "✗"} ${label.padEnd(30)} ${r.toFixed(2)}`);
+  console.log(`  ${ok ? "✓" : "✗"} ${label.padEnd(42)} ${r.toFixed(2)}`);
 }
 console.log("UI/graphical (report, target ≥3.0):");
 for (const [label, fg, bg] of uiChecks) {
-  if (!fg || !bg) { console.log(`  ? ${label}: missing token`); continue; }
-  const r = ratio(fg, bg);
-  console.log(`  ${r >= 3 ? "✓" : "•"} ${label.padEnd(30)} ${r.toFixed(2)}${r < 3 ? "  (use for large/semibold + paper label)" : ""}`);
+  const f = resolve_(fg), b = resolve_(bg);
+  if (!f || !b) { console.log(`  ? ${label}: missing token`); continue; }
+  const r = ratio(f, b);
+  console.log(`  ${r >= 3 ? "✓" : "•"} ${label.padEnd(42)} ${r.toFixed(2)}${r < 3 ? "  (use for large/semibold + paper label)" : ""}`);
 }
 
-// ── COVERAGE: every status/accent/focus token is IN a check ──────────────────
+// ── COVERAGE: every status/accent/focus token is IN a check, BY NAME ─────────
 //
-// `aaChecks` and `uiChecks` are hand-written lists of specific token names. Today they happen to
-// cover all 13 status/accent/focus tokens — but a NEW colour joins the palette without joining the
-// gate, silently, and the build stays green. "It goes through the gate when it lands" would be a
-// hope, not a mechanism.
+// Keyed by token NAME. It used to be keyed by VALUE, and that was a hole with a live case behind
+// it: any new token whose hex already appeared in some check counted as covered. Two tokens in this
+// very release — status-product needs-decision and sold, which alias the semantic warning and
+// success values — entered the palette in NO check and the build stayed green.
 //
-// That matters right now: three status colours (low-confidence, ready, listed) are designed and
-// not yet in this package. They were verified by hand, once, by someone who did not know this gate
-// existed. When they land, this makes the build FAIL until they are in a check — which is the
-// difference between a gate they pass and a gate they were put through.
+// Verified by mutation, twice. A probe colour reusing an existing hex passed the value-keyed guard;
+// one bit different, it failed. A first attempt at this fix still resolved names through values and
+// passed the same probe — the hole reproduced in a new shape. Only names work.
 //
-// Foreground-only by design: a `-fill` is a background and is checked as the `bg` side of its
-// ink pairing, so it counts as covered by appearing in either position.
-const covered = new Set([...aaChecks, ...uiChecks].flatMap(([, fg, bg]) => [fg, bg]));
+// Same colour in a different ROLE is a different pairing, and `sold` is the proof: it is a filled
+// pill, so its text sits on the colour. An alias is therefore checked in its own role, never
+// inherited. That means more entries in the lists, which is what the lists are for.
+const coveredNames = new Set(
+  [...aaChecks, ...uiChecks].flatMap(([, fg, bg]) => [fg, bg]).filter((s) => typeof s === "string"));
 const uncovered = Object.keys(val)
   .filter((n) => /^curio-(status|accent|focus)-/.test(n))
-  .filter((n) => !covered.has(val[n]));
+  .filter((n) => !coveredNames.has(n));
 
 if (uncovered.length > 0) {
   console.error(`\n✗ ${uncovered.length} colour token(s) are in the palette but in NO contrast check:`);
@@ -431,6 +484,7 @@ if (uncovered.length > 0) {
   console.error("  Add each to aaChecks (text/ink, ≥4.5) or uiChecks (graphical, ≥3.0) in build.mjs.");
   console.error("  Which list is a real decision: 4.5 is for anything read as text, 3.0 for a dot,");
   console.error("  bar or icon. Putting a label colour in uiChecks passes a gate it should not.");
+  console.error("  Aliasing an already-checked colour is NOT coverage — check it in its own role.");
   failed++;
 }
 
