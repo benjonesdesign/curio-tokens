@@ -1,0 +1,11 @@
+{
+  "$description": "Product status scale — CONVENTIONS §1. Six statuses, six colours, distinct from the three-tier semantic status scale in status.json and from the brand accents. `needs-decision` and `sold` alias the existing semantic values rather than duplicating them; `held` has no colour of its own (text-muted on surface-overlay) and is therefore not a token. Contrast measured 2026-08-31 against the tinted pill, the surface the text actually sits on.",
+  "status-product": {
+    "$type": "color",
+    "low-confidence": { "$value": "#9AA3B8", "$description": "We are unsure what this card IS. Uncertainty, not alarm. Worst measured ratio 5.39:1 on its pill over surface-raised." },
+    "ready":          { "$value": "#7BB0F0", "$description": "Staged and waiting. NOT success — green here claimed a victory that had not happened. 5.91:1." },
+    "listed":         { "$value": "#59C9D6", "$description": "Live in market. Same family as ready, one step on. 6.38:1." },
+    "needs-decision": { "$value": "{status.warning.on-dark}", "$description": "The only status that asks the seller to act. Aliases the semantic warning." },
+    "sold":           { "$value": "{status.success.on-dark}", "$description": "The only terminal state and the only filled pill. Aliases the semantic success." }
+  }
+}

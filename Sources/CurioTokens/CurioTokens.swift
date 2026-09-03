@@ -36,6 +36,11 @@ public enum CurioTokens {
     public static let fallbackAccentEvidenceText = Color(red: 0.2980, green: 0.2471, blue: 0.7176)
     public static let fallbackAccentAttentionText = Color(red: 0.4824, green: 0.2980, blue: 0.0745)
     public static let focusRing = Color(red: 0.9059, green: 0.6588, blue: 0.3608)
+    public static let statusProductLowConfidence = Color(red: 0.6039, green: 0.6392, blue: 0.7216)
+    public static let statusProductReady = Color(red: 0.4824, green: 0.6902, blue: 0.9412)
+    public static let statusProductListed = Color(red: 0.3490, green: 0.7882, blue: 0.8392)
+    public static let statusProductNeedsDecision = Color(red: 0.9137, green: 0.7176, blue: 0.3569)
+    public static let statusProductSold = Color(red: 0.3098, green: 0.8157, blue: 0.5608)
     public static let statusSuccessFill = Color(red: 0.1686, green: 0.7137, blue: 0.4510)
     public static let statusSuccessInk = Color(red: 0.0431, green: 0.0510, blue: 0.0706)
     public static let statusSuccessOnDark = Color(red: 0.3098, green: 0.8157, blue: 0.5608)
@@ -60,6 +65,20 @@ public enum CurioTokens {
     public static let radiusMd: CGFloat = 12
     public static let radiusLg: CGFloat = 16
     public static let radiusFeature: CGFloat = 24
+    public static let typeMicro: CGFloat = 12
+    public static let typeCaption: CGFloat = 14
+    public static let typeBody: CGFloat = 16
+    public static let typeSubhead: CGFloat = 20
+    public static let typeTitle: CGFloat = 24
+    public static let typeDisplay: CGFloat = 32
+    public static let typeHero: CGFloat = 40
+    public static let leadingMicro: CGFloat = 18
+    public static let leadingCaption: CGFloat = 20
+    public static let leadingBody: CGFloat = 24
+    public static let leadingSubhead: CGFloat = 26
+    public static let leadingTitle: CGFloat = 30
+    public static let leadingDisplay: CGFloat = 40
+    public static let leadingHero: CGFloat = 48
   }
   public enum Spacing {
     public static let spacingXs: CGFloat = 4
@@ -87,5 +106,11 @@ public enum CurioTokens {
     public static let fontIosProductExtraBold = "PlusJakartaSans-ExtraBold"
     public static let fontIosEvidence = "IBMPlexMono-Regular"
     public static let fontIosEvidenceMedium = "IBMPlexMono-Medium"
+  }
+  public enum Weight {
+    public static let weightRegular: Int = 400
+    public static let weightMedium: Int = 500
+    public static let weightSemibold: Int = 600
+    public static let weightBold: Int = 700
   }
 }

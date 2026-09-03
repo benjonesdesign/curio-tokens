@@ -17,9 +17,17 @@
 //
 //   node verify-outputs.mjs
 //
-// MUTATION-CHECKED 2026-09-03: red when a converter in build.mjs is altered (e.g. Swift colour
-// channels scaled by 254 instead of 255, or duration emitted in ms instead of seconds), green when
-// restored. Verified for the Swift, Kotlin and Android XML paths.
+// MUTATION-CHECKED 2026-09-03. Nine breakages of build.mjs, each caught naming the token and both
+// values; green when restored:
+//   Swift red channel scaled by 254 · Swift duration in ms not seconds · Kotlin ARGB reversed to
+//   BGR · Swift radius doubled · Kotlin weight off by 100 · Android type size emitted dp not sp ·
+//   sp/dp swapped for every dimension · the paired --line-height dropped from @theme · every size
+//   paired with the WRONG leading. Plus: Sources/CurioTokens.swift edited out of step with dist/.
+//
+// Three of those passed at first and are the reason this file has the shape it has: the sp/dp one
+// (the unit was parsed and discarded), the dropped --line-height (nothing checked the pair), and
+// the same again after the pairing check was written, because it pushed to `problems` AFTER the
+// block that reports them — an assertion that ran and could not fail.
 //
 // BLIND SPOTS — what a green run here does NOT establish:
 //   1. That a token is NAMED correctly. `cleanName` is shared with build.mjs by design — a second
@@ -30,14 +38,17 @@
 //      check's subject (canon/design/TOKENS.md), not this one's.
 //   4. Font stacks and cubic-beziers, which are passed through as strings and compared literally
 //      only where a platform emits them at all.
-//   5. That Style Dictionary resolved aliases the same way this file does. Both implementations
+//   5. Android XML `sp` vs `dp`: the unit is compared, but nothing here knows which tokens OUGHT to
+//      scale with the user's font setting — that judgement lives in lib-names.mjs and is shared
+//      with the generator, so a wrong call there is invisible to this file.
+//   6. That Style Dictionary resolved aliases the same way this file does. Both implementations
 //      could be wrong together on a construct neither has met — nothing here cross-checks the
 //      resolver itself.
 
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { cleanName, themeName, themeVar, isIosFont } from "./lib-names.mjs";
+import { cleanName, themeName, themeVar, isIosFont, isTypeSize, isLeading, isWeight, scalesWithUserFont } from "./lib-names.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SRC = join(HERE, "src/tokens");
@@ -114,10 +125,35 @@ const files = {
 for (const [k, p] of Object.entries(files)) if (!existsSync(p)) fail(`missing generated output: ${p}\n  Run: npm run build`);
 const text = Object.fromEntries(Object.entries(files).map(([k, p]) => [k, readFileSync(p, "utf8")]));
 
+// The type scale is emitted under TWO css names — the Tailwind namespace and the canonical
+// --curio-* one — from a single source token. Checking one and not the other would leave half the
+// web output unverified, which is the shape this file exists to catch.
+const cssNamesFor = (tok, name) => {
+  const names = [];
+  if (themeVar(tok)) names.push(themeName(tok));
+  if (!themeVar(tok) || isTypeSize(tok) || isLeading(tok) || isWeight(tok)) names.push(`--${name}`);
+  return names;
+};
+
 const camel = (n) => n.replace(/^curio-/, "").replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 const snake = (n) => n.replace(/-/g, "_");
 
 const COMPARABLE = new Set(["color", "dimension", "duration"]);
+// The SwiftPM module source is a SECOND copy of the Swift output, and it is the one iOS actually
+// builds against — Package.swift points at Sources/, not dist/. Everything below verifies dist, so
+// without this the file consumers compile is unverified. They are generated together and must be
+// identical; a difference means one of them was hand-edited or a build half-ran.
+{
+  const a = readFileSync(join(HERE, "dist/CurioTokens.swift"), "utf8");
+  const bPath = join(HERE, "Sources/CurioTokens/CurioTokens.swift");
+  if (!existsSync(bPath)) fail("missing Sources/CurioTokens/CurioTokens.swift — run: npm run build");
+  if (readFileSync(bPath, "utf8") !== a) {
+    fail("dist/CurioTokens.swift and Sources/CurioTokens/CurioTokens.swift differ.\n" +
+         "  Sources/ is what SwiftPM builds; dist/ is what everything below verifies.\n" +
+         "  Run: npm run build");
+  }
+}
+
 const problems = [];
 const skipped = [];
 const checked = { swift: 0, kotlin: 0, android: 0, css: 0 };
@@ -143,7 +179,7 @@ for (const path of Object.keys(raw)) {
     const want = c.a >= 1
       ? `#${b2(c.r)}${b2(c.g)}${b2(c.b)}`.toUpperCase()
       : `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`;
-    const cssVar = themeVar(tok) ? themeName(tok) : `--${name}`;
+    for (const cssVar of cssNamesFor(tok, name)) {
     const m = text.css.match(new RegExp(`${cssVar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*:\\s*([^;]+);`));
     if (!m) uncompared.push(`${name} — no ${cssVar} in the CSS`);
     if (m) {
@@ -155,20 +191,23 @@ for (const path of Object.keys(raw)) {
       if (!gc || gc.r !== c.r || gc.g !== c.g || gc.b !== c.b || !near(gc.a, c.a, 0.004))
         problems.push(`${name} — CSS has ${got}, src/tokens says ${want} (${t.file})`);
     }
+    }
   }
 
   // CSS numerics — px dimensions and ms durations. Compared separately from colour because a token
   // compared on the three mobile outputs and NOT on web passes the zero-comparison guard while
   // leaving the output every web consumer imports unverified.
   if (!c && n) {
-    const cssVar = themeVar(tok) ? themeName(tok) : `--${name}`;
+    for (const cssVar of cssNamesFor(tok, name)) {
     const m = text.css.match(new RegExp(`${cssVar.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*:\\s*([^;]+);`));
+    if (!m) uncompared.push(`${name} — no ${cssVar} in the CSS`);
     if (m) {
       checked.css++;
       comparisons++;
       const g = num(m[1]);
       if (!g || !near(g.n, n.n, 1e-6) || (n.unit && g.unit && g.unit !== n.unit))
         problems.push(`${name} — CSS has ${m[1].trim()}, src/tokens says ${t.value} (${t.file})`);
+    }
     }
   }
 
@@ -228,11 +267,40 @@ for (const path of Object.keys(raw)) {
       const g = num(got);
       if (g && !near(g.n, n.n, 1e-6))
         problems.push(`${name} — Android XML ${got}, src/tokens says ${n.n} (${t.file})`);
+      // The UNIT is the whole point on Android. `sp` scales with the user's font-size setting and
+      // `dp` does not, so a type size emitted as dp means a seller who enlarged their system font
+      // gets no change from the entire type scale — invisible in every screenshot. Comparing only
+      // the number passed that mutation, which is how this line came to exist.
+      const wantUnit = scalesWithUserFont(tok) ? "sp" : "dp";
+      if (g && g.unit !== wantUnit)
+        problems.push(`${name} — Android XML ${got} is ${g.unit || "unitless"}, must be ${wantUnit}` +
+          (wantUnit === "sp" ? " (type scales with the user's font-size setting; dp does not)" : ""));
     }
   }
 
   if (comparisons === 0 && COMPARABLE.has(t.type) && !isIosFont(tok)) {
     zeroCompared.push(`${name} (${t.type}, ${t.file}) — value ${JSON.stringify(t.value).slice(0, 60)}`);
+  }
+}
+
+// Every type size must carry its paired `--<name>--line-height` in @theme, matching its leading
+// token. That pairing is what makes one `text-curio-*` class set size AND leading; without it the
+// class sets size only and the element inherits whatever line-height is above it — the exact defect
+// the scale exists to end. Dropping the pair changed nothing else, so nothing else caught it.
+for (const path of Object.keys(raw)) {
+  const segs = path.split(".");
+  const tok = { path: segs, $type: raw[path].type };
+  if (!isTypeSize(tok)) continue;
+  const lead = resolve(`leading.${segs[1]}`);
+  if (!lead) { problems.push(`type.${segs[1]} has no matching leading.${segs[1]} in src/tokens`); continue; }
+  const want = num(lead.value);
+  const pair = `${themeName(tok)}--line-height`;
+  const m = text.css.match(new RegExp(`${pair.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*:\\s*([^;]+);`));
+  if (!m) problems.push(`${pair} is missing — text-curio-${segs[1]} would set size but not leading`);
+  else {
+    const got = num(m[1]);
+    if (!got || !near(got.n, want.n, 1e-6))
+      problems.push(`${pair} is ${m[1].trim()}, leading.${segs[1]} says ${want.n}${want.unit}`);
   }
 }
 

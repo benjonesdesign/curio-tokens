@@ -33,6 +33,11 @@
     <color name="curio_fallback_accent_evidence_text">#FF4C3FB7</color>
     <color name="curio_fallback_accent_attention_text">#FF7B4C13</color>
     <color name="curio_focus_ring">#FFE7A85C</color>
+    <color name="curio_status_product_low_confidence">#FF9AA3B8</color>
+    <color name="curio_status_product_ready">#FF7BB0F0</color>
+    <color name="curio_status_product_listed">#FF59C9D6</color>
+    <color name="curio_status_product_needs_decision">#FFE9B75B</color>
+    <color name="curio_status_product_sold">#FF4FD08F</color>
     <color name="curio_status_success_fill">#FF2BB673</color>
     <color name="curio_status_success_ink">#FF0B0D12</color>
     <color name="curio_status_success_on_dark">#FF4FD08F</color>

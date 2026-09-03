@@ -1,0 +1,118 @@
+{
+  "$description": "Type scale — CONVENTIONS (canon/design/components/CONVENTIONS.md). Seven sizes with matched leadings and four weights. 12px floor. All seven values are EVEN, which is the invariant that holds and the reason odd sizes (11px, 13px, 15px) are not on the scale: at Android's 1.5x density an even sp value lands on an integer pixel and an odd one lands on a half. NOTE: an earlier version of this description claimed the scale sits on a 4px grid. It does not — 14 is not a multiple of 4 — and the canon records no rationale for the scale anywhere; that claim was inherited from a back-reference in CONVENTIONS section 3 and was never verified. Sizes and leadings are `dimension` so they reach every platform output; see the note on `weight` in the README.",
+  "type": {
+    "$type": "dimension",
+    "micro": {
+      "$value": {
+        "value": 12,
+        "unit": "px"
+      },
+      "$description": "Legal, metadata, pill labels, the smallest permitted size. Floor — nothing goes below this."
+    },
+    "caption": {
+      "$value": {
+        "value": 14,
+        "unit": "px"
+      },
+      "$description": "Secondary UI text, field labels, card metadata."
+    },
+    "body": {
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Default reading size."
+    },
+    "subhead": {
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "Card titles, panel headings."
+    },
+    "title": {
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Screen titles, figures that carry weight."
+    },
+    "display": {
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "Page-level headings."
+    },
+    "hero": {
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "Brand moments only. Never product chrome."
+    }
+  },
+  "leading": {
+    "$type": "dimension",
+    "micro": {
+      "$value": {
+        "value": 18,
+        "unit": "px"
+      }
+    },
+    "caption": {
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      }
+    },
+    "body": {
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      }
+    },
+    "subhead": {
+      "$value": {
+        "value": 26,
+        "unit": "px"
+      }
+    },
+    "title": {
+      "$value": {
+        "value": 30,
+        "unit": "px"
+      }
+    },
+    "display": {
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      }
+    },
+    "hero": {
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      }
+    }
+  },
+  "weight": {
+    "$type": "fontWeight",
+    "regular": {
+      "$value": 400
+    },
+    "medium": {
+      "$value": 500,
+      "$description": "Default UI weight."
+    },
+    "semibold": {
+      "$value": 600,
+      "$description": "Emphasis, headings, figures."
+    },
+    "bold": {
+      "$value": 700,
+      "$description": "Display and hero only."
+    }
+  }
+}

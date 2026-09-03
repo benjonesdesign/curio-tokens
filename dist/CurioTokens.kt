@@ -42,6 +42,11 @@ public object CurioTokens {
     public val fallbackAccentEvidenceText: Long = 0xFF4C3FB7L
     public val fallbackAccentAttentionText: Long = 0xFF7B4C13L
     public val focusRing: Long = 0xFFE7A85CL
+    public val statusProductLowConfidence: Long = 0xFF9AA3B8L
+    public val statusProductReady: Long = 0xFF7BB0F0L
+    public val statusProductListed: Long = 0xFF59C9D6L
+    public val statusProductNeedsDecision: Long = 0xFFE9B75BL
+    public val statusProductSold: Long = 0xFF4FD08FL
     public val statusSuccessFill: Long = 0xFF2BB673L
     public val statusSuccessInk: Long = 0xFF0B0D12L
     public val statusSuccessOnDark: Long = 0xFF4FD08FL
@@ -66,6 +71,20 @@ public object CurioTokens {
     public val radiusMd: Float = 12f
     public val radiusLg: Float = 16f
     public val radiusFeature: Float = 24f
+    public val typeMicro: Float = 12f
+    public val typeCaption: Float = 14f
+    public val typeBody: Float = 16f
+    public val typeSubhead: Float = 20f
+    public val typeTitle: Float = 24f
+    public val typeDisplay: Float = 32f
+    public val typeHero: Float = 40f
+    public val leadingMicro: Float = 18f
+    public val leadingCaption: Float = 20f
+    public val leadingBody: Float = 24f
+    public val leadingSubhead: Float = 26f
+    public val leadingTitle: Float = 30f
+    public val leadingDisplay: Float = 40f
+    public val leadingHero: Float = 48f
   }
   public object Spacing {
     public val spacingXs: Float = 4f
@@ -80,5 +99,11 @@ public object CurioTokens {
     public val durationStandard: Long = 200L
     public val durationReveal: Long = 400L
     public val durationAmbient: Long = 8000L
+  }
+  public object Weight {
+    public val weightRegular: Int = 400
+    public val weightMedium: Int = 500
+    public val weightSemibold: Int = 600
+    public val weightBold: Int = 700
   }
 }

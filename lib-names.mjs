@@ -34,12 +34,21 @@ export function cleanName(path) {
   return `curio-${p.join("-")}`;
 }
 
+// Type sizes and leadings are scaled by the USER's font-size setting; every other dimension is not.
+// On Android that is the difference between `sp` and `dp`, and emitting a type size as `dp` means a
+// seller who has enlarged their system font gets no change from the entire type scale — a failure
+// that appears in no screenshot and no visual review. Named here so all three emitters agree.
+export const isTypeSize = (t) => t.path[0] === "type";
+export const isLeading   = (t) => t.path[0] === "leading";
+export const isWeight    = (t) => (t.$type ?? t.type) === "fontWeight";
+export const scalesWithUserFont = (t) => isTypeSize(t) || isLeading(t);
+
 // ── Partitioning: which tokens are Tailwind @theme utilities vs plain vars ──
 export const isColor  = (t) => (t.$type ?? t.type) === "color";
 export const isRadius  = (t) => t.path[0] === "radius";
 export const isSpacing = (t) => t.path[0] === "spacing";
 export const isFont    = (t) => t.path[0] === "font" && t.path[1] !== undefined && t.path.length === 2 && ["display", "product", "evidence"].includes(t.path[1]);
-export const themeVar  = (t) => isColor(t) || isRadius(t) || isSpacing(t) || isFont(t);
+export const themeVar  = (t) => isColor(t) || isRadius(t) || isSpacing(t) || isFont(t) || isTypeSize(t) || isLeading(t) || isWeight(t);
 // iOS-only PostScript-name tokens (type-ios.json) — Swift output only, never web CSS. A
 // PostScript name ("PlusJakartaSans-Regular") is meaningless as a CSS custom property; emitting
 // it would just be dead, confusing output for web consumers.
@@ -51,6 +60,13 @@ export function themeName(t) {
   if (isRadius(t))  return `--radius-${t.path.slice(1).join("-")}`.replace(/^--radius-/, "--radius-curio-");
   if (isSpacing(t)) return `--spacing-${t.path.slice(1).join("-")}`.replace(/^--spacing-/, "--spacing-curio-");
   if (isFont(t))    return `--font-curio-${t.path.slice(1).join("-")}`;
+  // Tailwind v4 namespaces. `--text-*` generates text-<name>, and a paired `--text-<name>--line-height`
+  // makes that ONE utility set size and leading together — which is why the leadings are worth
+  // shipping rather than leaving every call site to pick one. Verified against tailwindcss 4.3.2.
+  if (isTypeSize(t)) return `--text-curio-${t.path.slice(1).join("-")}`;
+  if (isLeading(t))  return `--leading-curio-${t.path.slice(1).join("-")}`;
+  if (isWeight(t))   return `--font-weight-curio-${t.path.slice(1).join("-")}`;
   return `--${n}`;
 }
+
 
