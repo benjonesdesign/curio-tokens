@@ -1,5 +1,50 @@
 # Changelog
 
+## 3.3.0 — 2026-09-03
+
+**The type scale, and the three product statuses.** Purely additive: 48 new CSS declarations, no
+existing token changed or removed, so every consumer is a behavioural no-op until it opts in.
+
+Seven sizes, seven matched leadings and four weights (`type.*`, `leading.*`, `weight.*`), plus the
+`status-product.*` colours — low-confidence, ready and listed, with needs-decision and sold
+aliasing the semantic warning and success values. All of it existed only as hand-written values in
+`curio-shared/canon/design`, including inside the reference kit, which is the artefact that exists
+to stop hand-written values.
+
+**Type sizes and leadings emit as `sp` on Android, not `dp`.** `dp` ignores the seller's own
+font-size setting, so the entire type scale would have done nothing for anyone who had enlarged it —
+a failure that appears in no screenshot and in no visual review. Radius, spacing and the rest stay
+`dp`. The distinction lives in `lib-names.mjs` as `scalesWithUserFont`, so all three emitters agree.
+
+**The four weights reach mobile.** Neither the Swift nor the Compose emitter had a `fontWeight`
+branch, so a weight token would have emitted to web only. Both now emit `Int` — what
+`FontWeight(int)` takes on Compose, and what a `Font.Weight` mapping takes on SwiftUI, which has no
+public numeric initialiser.
+
+**On web, one class now carries size *and* leading.** Each size ships a paired
+`--text-<name>--line-height`, so `text-curio-body` sets both. Verified by compiling against the
+consuming app's own tailwindcss 4.3.2, and checked that the built-in `text-sm`/`text-lg` scale is
+unaffected. The scale is emitted under two names from one source token: `--text-curio-*` (Tailwind
+utilities, web-only by construction) and `--curio-type-*` (the canonical name the design canon,
+every component spec and both mobile lanes already cite). They cannot drift.
+
+**Two new gates, and one that was theatre.**
+
+- `verify-outputs.mjs` compares all four generated outputs against `src/tokens/*.json`, resolving
+  aliases and converting values with its **own** implementations — reusing `build.mjs`'s would only
+  prove the build agrees with itself. 371 comparisons, run by `npm run check` **before** the
+  staleness diff, because a wrong transform also makes `dist` stale and staleness-first would report
+  it as "regenerate", a remedy that goes green with the wrong value baked in.
+- The AA gate's coverage guard is now keyed by token **name**, not value. Keyed by value, a new
+  colour whose hex already appeared in another check counted as covered — which is exactly how
+  `status-product` needs-decision and sold, both aliases, would have entered the palette in no check
+  at all. `sold` proves why that matters: it is the one FILLED pill, so its text sits *on* the
+  colour, a pairing nothing had ever measured.
+- The gate also now checks status labels on their **tinted pill** rather than only against `base`.
+  A label sits on a pill of its own colour at low alpha, which is lighter than the page, so an
+  on-dark/base check reports a better ratio than ships. All three new colours pass on the pill:
+  5.39, 5.91, 6.38.
+
 ## 3.2.0 — 2026-08-26
 
 **Adds Android output — the same generator, a third platform.** Two new Style Dictionary formats

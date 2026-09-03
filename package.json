@@ -1,6 +1,6 @@
 {
   "name": "@curio/tokens",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Curio brand design tokens — single source, compiled to app/website CSS, an iOS SwiftPM package, and an Android Kotlin/Compose library via Style Dictionary.",
   "type": "module",
   "main": "dist/curio-brand.css",
