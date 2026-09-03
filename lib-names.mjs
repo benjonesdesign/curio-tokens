@@ -55,6 +55,11 @@ export const themeVar  = (t) => isColor(t) || isRadius(t) || isSpacing(t) || isF
 // PostScript name ("PlusJakartaSans-Regular") is meaningless as a CSS custom property; emitting
 // it would just be dead, confusing output for web consumers.
 export const isIosFont = (t) => t.path[0] === "font-ios";
+// The mirror of isIosFont: a token that is correct on WEB and nowhere else. A capsule's radius is
+// half the element's height, so 9999px is the CSS idiom for it and a lie as a Swift CGFloat or a
+// Compose Dp — both platforms have a real shape for it. Emitting the number anyway is how a value
+// correct on one platform reaches three, which is the failure this package keeps hitting.
+export const isWebOnlyShape = (t) => t.path[0] === "radius" && t.path[1] === "capsule";
 
 export function themeName(t) {
   const n = cleanName(t.path); // e.g. curio-surface-base
