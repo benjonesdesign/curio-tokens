@@ -96,9 +96,17 @@ output is copy-in rather than a pinned dependency like everything else here.
    `tokens:check` also runs against the installed copy). Optionally also `./gradlew test` —
    `CurioTokensTest.kt` exercises the generated Kotlin's actual values, not just the build's exit
    code.
-4. Bump `version` in `package.json`, update `CHANGELOG.md`, commit, tag (`git tag vX.Y.Z`), push
+4. **`swift build` — on a Mac, before tagging.** This proves the generated
+   `Sources/CurioTokens/CurioTokens.swift` actually compiles. It has to be a Mac: the package
+   exposes `SwiftUI.Color`, and SwiftUI does not exist on Linux, so no container can do it.
+   It used to run on every push in `.github/workflows/ci.yml`; from 2026-09-05 that workflow is
+   `workflow_dispatch` only, and this is where the check lives instead. **A consumer pins a tag,
+   not a commit**, so the claim only ever had to be true here — per-push it was buying a guarantee
+   nobody consumed, on a runner billed at 10x Linux. See `../CI-AUDIT-actions-vs-local.md`.
+   Do not tag on an unbuilt Swift output: iOS pins the tag and finds out for you.
+5. Bump `version` in `package.json`, update `CHANGELOG.md`, commit, tag (`git tag vX.Y.Z`), push
    with tags.
-5. Bump the pinned tag in each consumer's `package.json` (app, website), `project.yml` / Xcode
+6. Bump the pinned tag in each consumer's `package.json` (app, website), `project.yml` / Xcode
    package version (iOS), and the Android app's `build.gradle.kts` dependency version. JitPack
    builds the Android artifact lazily on first request for a tag — no push-side publish step.
 

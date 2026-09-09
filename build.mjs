@@ -324,6 +324,14 @@ console.log("✓ Tokens built → dist/curio-brand.css, dist/CurioTokens.swift, 
 // a hex that already appears in another check. The value-keyed version passed that second probe,
 // which is how `status-product` needs-decision and sold would have entered the palette unchecked.
 //
+// HOW TO PROVE THIS GATE STILL DISCRIMINATES — and the way that looks like it works and does not.
+// Mutate a value in `src/tokens/`, not in `dist/`. `npm run check` runs `build.mjs` FIRST, which
+// regenerates dist/curio-brand.css from src/tokens before this file reads it — so an edited dist
+// is overwritten before it is measured, every check still passes, and the gate looks proven when
+// nothing was tested. Darkening status-product.listed to #3A7A82 in src/tokens/status-product.json
+// gives `✗ status-product listed on its pill 3.00` and a non-zero exit. Restore afterwards.
+// Recorded here because a reviewer gets this wrong once and then distrusts the gate itself.
+//
 // BLIND SPOTS — what a green run of this gate does NOT establish (ADR 0024, 2026-09-02):
 //   1. Anything outside status/accent/focus. Surfaces, text, lines and the brand ramp are in no
 //      check and the coverage guard does not require them to be.
@@ -336,6 +344,14 @@ console.log("✓ Tokens built → dist/curio-brand.css, dist/CurioTokens.swift, 
 //      changes one this gate keeps measuring the old surface and stays green.
 //   5. uiChecks is REPORT-ONLY. A graphical element below 3.0 prints a bullet and does not fail
 //      the build. Only aaChecks and the coverage guard can turn this red.
+//   6. So is the accent-as-a-pill-label block (added 2026-09-05). It prints the number that says
+//      `accent-evidence` cannot be a pill label at 3.85 and lets the build pass, deliberately —
+//      the fault it describes is in a screen, not in a token. Nothing here notices a screen that
+//      goes on doing it, and nothing here knows the 0.15 it assumes is the alpha that screen uses.
+//   7. Every pill check assumes `surface-raised`. A pill on `surface-overlay` — which the neutral
+//      vocabulary values render on — is a composite this gate never computes. The tightest margin
+//      in the whole pill system (`held` at 4.70, CONVENTIONS §1) is that case, and it is measured
+//      by a canon script rather than here, on tokens that carry no colour of their own.
 // Validate the ACTUAL generated CSS (what every consumer imports), not an intermediate.
 const { readFileSync } = await import("node:fs");
 const css = readFileSync(`${DIST}curio-brand.css`, "utf8");
@@ -441,6 +457,27 @@ for (const [label, fg, bg] of uiChecks) {
   if (!f || !b) { console.log(`  ? ${label}: missing token`); continue; }
   const r = ratio(f, b);
   console.log(`  ${r >= 3 ? "✓" : "•"} ${label.padEnd(42)} ${r.toFixed(2)}${r < 3 ? "  (use for large/semibold + paper label)" : ""}`);
+}
+
+// ── Accents AS A PILL LABEL — report only, and deliberately not a gate ───────
+//
+// Added 2026-09-05. The accents are reported above as GRAPHICAL elements on `base`, which is the
+// case the brand intends them for. The product also renders them as pill LABELS — the same
+// composite the status pills are gated on — and nothing measured that. `accent-evidence` reads
+// 5.28 as a graphic and **3.85 as a label on its own tint**, and that one number decided whether
+// the brand gained a categorical colour scale for the allocation vocabulary (it did not; see
+// canon/design/components/AllocationPill.md). A number a decision rests on should be derivable by
+// running a command, not quotable from a document.
+//
+// REPORT, not gate, and the reason is not squeamishness: CONVENTIONS §1 says an accent must never
+// carry product status, so an accent below 4.5 here is not a token that needs fixing — it is a
+// screen that needs correcting. Failing the build would stop three platforms over a rule this file
+// cannot enforce and a value that is correct for its intended use.
+console.log("Accents as a pill label (report; 4.5 is the threshold IF one is used this way):");
+for (const t of ["curio-accent-ready", "curio-accent-evidence", "curio-accent-completion"]) {
+  if (!val[t]) continue;
+  const r = ratio(val[t], resolve_(pillOf(t, 0.15, raised)));
+  console.log(`  ${r >= 4.5 ? "✓" : "•"} ${(t.replace("curio-accent-", "accent ") + " on a 15% tint").padEnd(42)} ${r.toFixed(2)}${r < 4.5 ? "  — NOT usable as a pill label" : ""}`);
 }
 
 // ── COVERAGE: every status/accent/focus token is IN a check, BY NAME ─────────

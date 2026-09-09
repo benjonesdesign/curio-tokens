@@ -1,9 +1,29 @@
 name: CI
 
+# MANUAL ONLY until 3 October 2026. Neither job fires on a push or a PR.
+#
+# GitHub Actions is out of budget (CI-AUDIT-actions-vs-local.md, item 8). The workflow is kept
+# rather than deleted: it is the documentation of what a full check is, and it is the thing that
+# gets turned back on. `workflow_dispatch` also means either job can still be run deliberately.
+#
+# What replaces each of them until then:
+#
+#   typescript / `npm run check`  — run LOCALLY by the design lane before handing over any block,
+#     with the AA gate's own output pasted into the handover. COORD re-runs it from the mount to
+#     verify. That is CI's one property worth paying for — a check independent of whoever claims
+#     it passed — and locally it costs nothing.
+#
+#   swift / `swift build`         — a BY-HAND PRE-TAG STEP on Ben's Mac. It proves the generated
+#     Swift compiles, and a consumer pins a TAG, not a commit, so the claim only has to be true at
+#     a release. Per-push it was buying a guarantee nobody consumed, on a runner billed at 10x
+#     Linux. Every release handoff from this lane says: run `swift build` in curio-tokens before
+#     tagging vX.
+#
+# In October the typescript job goes back to push/pull_request. The swift job does NOT — release-
+# only is the right cadence for it regardless of budget, which is what per-push macOS at 10x was
+# always hiding.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   # This repo had NO CI AT ALL until 2026-08-31, while shipping three generated outputs (dist,
