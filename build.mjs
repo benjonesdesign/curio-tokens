@@ -352,6 +352,16 @@ console.log("✓ Tokens built → dist/curio-brand.css, dist/CurioTokens.swift, 
 //      vocabulary values render on — is a composite this gate never computes. The tightest margin
 //      in the whole pill system (`held` at 4.70, CONVENTIONS §1) is that case, and it is measured
 //      by a canon script rather than here, on tokens that carry no colour of their own.
+//   8. TEXT DRAWN AT AN ALPHA. Every check here measures a text token at full opacity. The web app
+//      draws `text-curio-text-secondary/30` and `/60`, `text-curio-status-danger-on-dark/70` and
+//      `/80` — and because `text-secondary` is itself `rgba(…, 0.72)`, a `/30` suffix composes to
+//      an EFFECTIVE 0.216, not 0.30. This gate reports `text-secondary` at 8.98 and the product
+//      renders it at 1.9. Measured 2026-09-09 from origin/main; the sites are in
+//      canon/design/COMPOSITE-CONTRAST.md.
+//   9. Every alpha the app draws of ANY token — `/5` through `/90`, as fill, border, ring and
+//      divider — except the four pill fills listed below. Alpha is a per-site decision made in
+//      `app/`, which this repo cannot read, so this gate cannot see it even in principle. The
+//      canon generator named in 8 is where that measurement lives.
 // Validate the ACTUAL generated CSS (what every consumer imports), not an intermediate.
 const { readFileSync } = await import("node:fs");
 const css = readFileSync(`${DIST}curio-brand.css`, "utf8");
@@ -508,6 +518,25 @@ if (uncovered.length > 0) {
   console.error("  bar or icon. Putting a label colour in uiChecks passes a gate it should not.");
   console.error("  Aliasing an already-checked colour is NOT coverage — check it in its own role.");
   failed++;
+}
+
+// ── STATE THE BLIND SPOTS IN THE OUTPUT, NOT ONLY IN THE SOURCE ──────────────
+//
+// Added 2026-09-09. Every blind spot above was already written down — in a comment nobody reads at
+// the moment they read a green tick. "A check states what it does not catch, INSIDE the check"
+// (WORKING-MODEL.md); a comment is not inside the check as far as its output is concerned. So the
+// list is printed, read from this file's own source rather than restated, because a second copy is
+// a second thing to go stale — the same mechanism canon/design/check.mjs uses.
+//
+// This prints on a pass as well as a failure, and that is the point: the passes are what get
+// over-read. Twice now this gate has passed a token whose shipped composite fails.
+{
+  const src = readFileSync(fileURLToPath(import.meta.url), "utf8");
+  const m = src.match(/^\/\/ BLIND SPOTS —[^\n]*\n(?:\/\/ {3,}.*\n)+/m);
+  console.log("\nWhat a green run of this gate does NOT establish:");
+  process.stdout.write(m
+    ? "  " + m[0].trimEnd().split("\n").map((l) => l.replace(/^\/\/ ?/, "")).join("\n  ") + "\n"
+    : "  (the BLIND SPOTS block in build.mjs could not be read — the list is not being printed)\n");
 }
 
 if (failed > 0) {
