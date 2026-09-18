@@ -24,6 +24,13 @@
 //   sp/dp swapped for every dimension · the paired --line-height dropped from @theme · every size
 //   paired with the WRONG leading. Plus: Sources/CurioTokens.swift edited out of step with dist/.
 //
+// MUTATION-CHECKED AGAIN 2026-09-18 for the two CSS shape checks, against a temporary probe token:
+//   dimToCss/durToCss guards removed → all three doubled-unit declarations named;
+//   themeName's leafAfter() reverted to path.slice(3) → the nameless variable named.
+// The doubled-unit case is also caught by the value comparison, so the shape check is not the only
+// thing standing between it and a release; the nameless-variable case is not caught by anything
+// else here, and was not caught by anything at all before today.
+//
 // Three of those passed at first and are the reason this file has the shape it has: the sp/dp one
 // (the unit was parsed and discarded), the dropped --line-height (nothing checked the pair), and
 // the same again after the pairing check was written, because it pushed to `problems` AFTER the
@@ -302,6 +309,44 @@ for (const path of Object.keys(raw)) {
     if (!got || !near(got.n, want.n, 1e-6))
       problems.push(`${pair} is ${m[1].trim()}, leading.${segs[1]} says ${want.n}${want.unit}`);
   }
+}
+
+// ── Two shape checks on the CSS, added 2026-09-18 ────────────────────────────────────────────
+// These run BEFORE the value comparisons report, deliberately. A doubled unit is usually caught
+// by the value comparison too — but it is caught as 'wrong value', and the fix for 'wrong value'
+// is to edit the token while the fix for this is to edit the transform. Naming the fault correctly
+// is the difference between a five-minute fix and the wrong one.
+// Everything else above compares a value against the source. These two catch a class of fault where the
+// emitted text is malformed rather than wrong-valued, which the value comparisons can miss — a
+// malformed value simply fails to parse and falls out of the loop, and the zero-comparison guard
+// only fires for tokens it knows to look for.
+//
+// Both were real, on the same day, from one root cause: `curio/value` is a TRANSITIVE transform, so
+// an alias is re-transformed after its target is already a platform string. `{brand.motion.duration
+// .fast}` emitted `120msms`; a dimension written as the string "24px" emitted `24pxpx`. CSS only —
+// Swift, Kotlin and Android were all correct, so three outputs of four looked fine.
+const shape = [];
+for (const line of text.css.split("\n")) {
+  const m = line.match(/^\s*(--[a-z0-9-]*)\s*:\s*(.+?);\s*$/i);
+  if (!m) continue;
+  const [, name, value] = m;
+  // A doubled unit. `120msms`, `24pxpx`, `1remrem`.
+  if (/^-?[\d.]+(px|rem|em|ms|s|%)\1$/.test(value) || /(px|rem|em|ms)\1$/.test(value)) {
+    shape.push(`${name}: ${value} — doubled unit. A transitive transform re-applied a unit to an already-formatted value.`);
+  }
+  // A nameless variable. `--transition-duration-curio-:` — emitted when a token's path is shallower
+  // than the namespace builder assumed, with no error and no Tailwind class.
+  if (/-$/.test(name)) {
+    shape.push(`${name}: ${value} — variable name ends in a separator, so its leaf name is empty. A token was added at a path shallower than themeName() assumed.`);
+  }
+}
+if (shape.length) {
+  console.error(`\n✗ ${shape.length} malformed CSS declaration(s):`);
+  for (const p of shape) console.error(`    ${p}`);
+  console.error("\n  Shape faults, not value faults, and the two want different fixes. A doubled unit is ALSO");
+  console.error("  reported below as a wrong value, which invites editing the token; the fault is in the");
+  console.error("  transform. A nameless variable is not reported below at all — nothing looks it up.\n");
+  process.exit(1);
 }
 
 if (problems.length) {

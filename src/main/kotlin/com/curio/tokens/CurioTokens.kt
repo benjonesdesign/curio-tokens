@@ -42,6 +42,9 @@ public object CurioTokens {
     public val fallbackAccentEvidenceText: Long = 0xFF4C3FB7L
     public val fallbackAccentAttentionText: Long = 0xFF7B4C13L
     public val focusRing: Long = 0xFFE7A85CL
+    public val scrimModal: Long = 0xBF171B2BL
+    public val scrimCameraControl: Long = 0x99000000L
+    public val overlayCaptureFlash: Long = 0x66FFFFFFL
     public val statusProductLowConfidence: Long = 0xFF9AA3B8L
     public val statusProductReady: Long = 0xFF7BB0F0L
     public val statusProductListed: Long = 0xFF59C9D6L

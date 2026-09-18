@@ -46,6 +46,9 @@
   --radius-curio-lg: 16px;
   --radius-curio-feature: 24px;
   --radius-curio-capsule: 9999px;
+  --color-curio-scrim-modal: rgba(23, 27, 43, 0.75);
+  --color-curio-scrim-camera-control: rgba(0, 0, 0, 0.60);
+  --color-curio-overlay-capture-flash: rgba(255, 255, 255, 0.40);
   --spacing-curio-xs: 4px;
   --spacing-curio-sm: 8px;
   --spacing-curio-md: 12px;
