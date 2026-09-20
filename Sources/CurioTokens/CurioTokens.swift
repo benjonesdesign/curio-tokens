@@ -28,7 +28,8 @@ public enum CurioTokens {
     public static let accentReady = Color(red: 0.4745, green: 0.8784, blue: 0.7647)
     public static let accentEvidence = Color(red: 0.5098, green: 0.4627, blue: 0.9098)
     public static let accentCompletion = Color(red: 0.9059, green: 0.6588, blue: 0.3608)
-    public static let lineQuiet = Color(red: 0.9529, green: 0.9412, blue: 0.9098, opacity: 0.14)
+    public static let lineBorder = Color(red: 0.9529, green: 0.9412, blue: 0.9098, opacity: 0.14)
+    public static let lineDivider = Color(red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.10)
     public static let lineStrong = Color(red: 0.9529, green: 0.9412, blue: 0.9098, opacity: 0.24)
     public static let fallbackSurfaceBase = Color(red: 0.9529, green: 0.9412, blue: 0.9098)
     public static let fallbackTextPrimary = Color(red: 0.0431, green: 0.0510, blue: 0.0706)
@@ -84,12 +85,14 @@ public enum CurioTokens {
     public static let leadingHero: CGFloat = 48
   }
   public enum Spacing {
-    public static let spacingXs: CGFloat = 4
-    public static let spacingSm: CGFloat = 8
-    public static let spacingMd: CGFloat = 12
-    public static let spacingLg: CGFloat = 16
-    public static let spacingXl: CGFloat = 24
-    public static let spacingXxl: CGFloat = 32
+    public static let spacing1: CGFloat = 4
+    public static let spacing2: CGFloat = 8
+    public static let spacing3: CGFloat = 12
+    public static let spacing4: CGFloat = 16
+    public static let spacing5: CGFloat = 24
+    public static let spacing6: CGFloat = 32
+    public static let spacing7: CGFloat = 48
+    public static let spacing8: CGFloat = 64
   }
   public enum Duration {
     public static let durationFast: TimeInterval = 0.12

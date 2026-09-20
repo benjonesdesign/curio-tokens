@@ -34,7 +34,8 @@ public object CurioTokens {
     public val accentReady: Long = 0xFF79E0C3L
     public val accentEvidence: Long = 0xFF8276E8L
     public val accentCompletion: Long = 0xFFE7A85CL
-    public val lineQuiet: Long = 0x24F3F0E8L
+    public val lineBorder: Long = 0x24F3F0E8L
+    public val lineDivider: Long = 0x1AFFFFFFL
     public val lineStrong: Long = 0x3DF3F0E8L
     public val fallbackSurfaceBase: Long = 0xFFF3F0E8L
     public val fallbackTextPrimary: Long = 0xFF0B0D12L
@@ -90,12 +91,14 @@ public object CurioTokens {
     public val leadingHero: Float = 48f
   }
   public object Spacing {
-    public val spacingXs: Float = 4f
-    public val spacingSm: Float = 8f
-    public val spacingMd: Float = 12f
-    public val spacingLg: Float = 16f
-    public val spacingXl: Float = 24f
-    public val spacingXxl: Float = 32f
+    public val spacing1: Float = 4f
+    public val spacing2: Float = 8f
+    public val spacing3: Float = 12f
+    public val spacing4: Float = 16f
+    public val spacing5: Float = 24f
+    public val spacing6: Float = 32f
+    public val spacing7: Float = 48f
+    public val spacing8: Float = 64f
   }
   public object Duration {
     public val durationFast: Long = 120L
