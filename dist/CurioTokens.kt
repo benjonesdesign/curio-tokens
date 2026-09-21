@@ -15,6 +15,7 @@ public object CurioTokens {
     public val brandPaper50: Long = 0xFFF3F0E8L
     public val brandCurioLight400: Long = 0xFF79E0C3L
     public val brandCurioLight700: Long = 0xFF176756L
+    public val brandViolet300: Long = 0xFFA79FF0L
     public val brandViolet400: Long = 0xFF8276E8L
     public val brandViolet700: Long = 0xFF4C3FB7L
     public val brandAmber400: Long = 0xFFE7A85CL
@@ -43,7 +44,7 @@ public object CurioTokens {
     public val fallbackAccentEvidenceText: Long = 0xFF4C3FB7L
     public val fallbackAccentAttentionText: Long = 0xFF7B4C13L
     public val focusRing: Long = 0xFFE7A85CL
-    public val scrimModal: Long = 0xBF171B2BL
+    public val scrimModal: Long = 0xCC07090DL
     public val scrimCameraControl: Long = 0x99000000L
     public val overlayCaptureFlash: Long = 0x66FFFFFFL
     public val statusProductLowConfidence: Long = 0xFF9AA3B8L

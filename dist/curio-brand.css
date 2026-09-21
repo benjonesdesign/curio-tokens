@@ -7,6 +7,7 @@
   --color-curio-brand-paper-50: #f3f0e8;
   --color-curio-brand-curio-light-400: #79e0c3;
   --color-curio-brand-curio-light-700: #176756;
+  --color-curio-brand-violet-300: #a79ff0;
   --color-curio-brand-violet-400: #8276e8;
   --color-curio-brand-violet-700: #4c3fb7;
   --color-curio-brand-amber-400: #e7a85c;
@@ -47,7 +48,7 @@
   --radius-curio-lg: 16px;
   --radius-curio-feature: 24px;
   --radius-curio-capsule: 9999px;
-  --color-curio-scrim-modal: rgba(23, 27, 43, 0.75);
+  --color-curio-scrim-modal: rgba(7, 9, 13, 0.80);
   --color-curio-scrim-camera-control: rgba(0, 0, 0, 0.60);
   --color-curio-overlay-capture-flash: rgba(255, 255, 255, 0.40);
   --spacing-curio-1: 4px;
