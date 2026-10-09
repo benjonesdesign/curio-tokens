@@ -1,5 +1,29 @@
 # Changelog
 
+## Unreleased — for 3.5.0 (design lane, 2026-10-09)
+
+**Two motion tokens the canon already uses.** `brand.motion.easing.standard` (`cubic-bezier(0.2, 0, 0, 1)`,
+Material 3 standard) for a move that starts and ends on screen, and the web stand-in for a spring at
+`duration.standard`; `brand.motion.duration.stagger` (40ms) for the offset between items entering in
+sequence, first five only. CSS emits `--curio-ease-standard` / `--ease-curio-standard` and
+`--curio-duration-stagger` / `--transition-duration-curio-stagger`; Swift and Kotlin get the duration (curves
+still emit to web only, see canon/design/TOKENS.md, Parity). Values from
+canon/design/token-proposals/motion.json; asked for in LANE-REPORTS/DESIGN-BRIEF-2026-10-09.md §2.
+Outputs rebuilt; `verify-outputs.mjs` passes.
+
+## 3.5.0 — 2026-09-22
+
+**Type roles.** Four role tokens — `type.role-screen-title`, `type.role-statement`,
+`type.role-sheet-title`, `type.role-group-label`, each with its matching `leading.role-*` — pointing
+at the existing sizes (title, display, subhead, micro). No value changes and no new sizes: the four
+rules in `canon/design/patterns/titles-and-labels.md` existed only as prose, so each lane chose a
+size by eye and the same kind of text drifted apart between web, iOS and Android. A role never
+carries its own number, so changing the scale still changes everything with it.
+
+Names are flat (`role-screen-title`, not `role.screen-title`) because `verify-outputs.mjs` pairs a
+size with its leading by the second path segment; a nested role would have had no leading to pair
+with and the size would have shipped without a line height.
+
 ## 3.4.0 — 2026-09-03
 
 **The motion tokens become reachable.** They have shipped since v1.x and were used **zero times**,

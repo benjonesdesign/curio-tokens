@@ -70,6 +70,10 @@ public enum CurioTokens {
     public static let radiusMd: CGFloat = 12
     public static let radiusLg: CGFloat = 16
     public static let radiusFeature: CGFloat = 24
+    public static let typeRoleScreenTitle: CGFloat = 24
+    public static let typeRoleStatement: CGFloat = 32
+    public static let typeRoleSheetTitle: CGFloat = 20
+    public static let typeRoleGroupLabel: CGFloat = 12
     public static let typeMicro: CGFloat = 12
     public static let typeCaption: CGFloat = 14
     public static let typeBody: CGFloat = 16
@@ -77,6 +81,10 @@ public enum CurioTokens {
     public static let typeTitle: CGFloat = 24
     public static let typeDisplay: CGFloat = 32
     public static let typeHero: CGFloat = 40
+    public static let leadingRoleScreenTitle: CGFloat = 30
+    public static let leadingRoleStatement: CGFloat = 40
+    public static let leadingRoleSheetTitle: CGFloat = 26
+    public static let leadingRoleGroupLabel: CGFloat = 18
     public static let leadingMicro: CGFloat = 18
     public static let leadingCaption: CGFloat = 20
     public static let leadingBody: CGFloat = 24
@@ -100,6 +108,7 @@ public enum CurioTokens {
     public static let durationStandard: TimeInterval = 0.2
     public static let durationReveal: TimeInterval = 0.4
     public static let durationAmbient: TimeInterval = 8
+    public static let durationStagger: TimeInterval = 0.04
   }
   public enum Fonts {
     public static let brandTypeDisplay = "Plus Jakarta Sans"

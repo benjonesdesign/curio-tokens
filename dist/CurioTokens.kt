@@ -76,6 +76,10 @@ public object CurioTokens {
     public val radiusMd: Float = 12f
     public val radiusLg: Float = 16f
     public val radiusFeature: Float = 24f
+    public val typeRoleScreenTitle: Float = 24f
+    public val typeRoleStatement: Float = 32f
+    public val typeRoleSheetTitle: Float = 20f
+    public val typeRoleGroupLabel: Float = 12f
     public val typeMicro: Float = 12f
     public val typeCaption: Float = 14f
     public val typeBody: Float = 16f
@@ -83,6 +87,10 @@ public object CurioTokens {
     public val typeTitle: Float = 24f
     public val typeDisplay: Float = 32f
     public val typeHero: Float = 40f
+    public val leadingRoleScreenTitle: Float = 30f
+    public val leadingRoleStatement: Float = 40f
+    public val leadingRoleSheetTitle: Float = 26f
+    public val leadingRoleGroupLabel: Float = 18f
     public val leadingMicro: Float = 18f
     public val leadingCaption: Float = 20f
     public val leadingBody: Float = 24f
@@ -106,6 +114,7 @@ public object CurioTokens {
     public val durationStandard: Long = 200L
     public val durationReveal: Long = 400L
     public val durationAmbient: Long = 8000L
+    public val durationStagger: Long = 40L
   }
   public object Weight {
     public val weightRegular: Int = 400

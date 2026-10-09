@@ -286,6 +286,13 @@
             "value": 8000,
             "unit": "ms"
           }
+        },
+        "stagger": {
+          "$value": {
+            "value": 40,
+            "unit": "ms"
+          },
+          "$description": "The offset between items that enter as a sequence (rows after a Skeleton, a Card fan dealing in), applied to the first five items only (canon/design/patterns/motion.md rule 7). Added 2026-10-09 from canon/design/token-proposals/motion.json."
         }
       },
       "easing": {
@@ -305,6 +312,15 @@
             1,
             1
           ]
+        },
+        "standard": {
+          "$value": [
+            0.2,
+            0,
+            0,
+            1
+          ],
+          "$description": "A move that begins and ends on screen (a row changing position, a segmented control's thumb), and the web stand-in for a spring at duration.standard. Material 3 standard. Added 2026-10-09 from canon/design/token-proposals/motion.json."
         }
       }
     }
