@@ -3,8 +3,8 @@
   "scrim": {
     "$type": "color",
     "modal": {
-      "$value": "rgba(23, 27, 43, 0.75)",
-      "$description": "The dim behind a sheet, a dialog or any overlay that takes the whole screen. surface-overlay at 75%. At this level content behind is legible as SHAPE and not as text, which is what a modal scrim is for — the seller keeps their place without being able to read past the decision. Replaces ConfirmDialog's hardcoded 50% black, which is both a different colour and a different opacity from everything else that dims the screen."
+      "$value": "rgba(7, 9, 13, 0.80)",
+      "$description": "The dim behind a sheet, a dialog or any overlay that takes the whole screen. surface-sunken at 80%. CHANGED 2026-09-21 (Ben: 'I'd rather the overlay make the page darker not lighter'): it was midnight-900 at 75%, which is LIGHTER than the base canvas it sits over, so on a dark product the scrim raised the page instead of receding it. A scrim must be darker than every surface it covers; sunken is the darkest surface in the set. At this level content behind is legible as SHAPE and not as text, which is what a modal scrim is for — the seller keeps their place without being able to read past the decision. Replaces ConfirmDialog's hardcoded 50% black, which is both a different colour and a different opacity from everything else that dims the screen."
     },
     "camera-control": {
       "$value": "rgba(0, 0, 0, 0.60)",

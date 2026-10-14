@@ -1,0 +1,41 @@
+{
+  "$description": "Type ROLES — what a piece of text is, pointing at the sizes in type-scale.json. Decided 2026-09-22 (Ben) to close the open question in canon/design/patterns/titles-and-labels.md: the four styles were rules in prose and sizes in code, so each lane picked by eye. A role never carries its own number; changing the scale changes every role with it.",
+  "type": {
+    "$type": "dimension",
+    "role-screen-title": {
+      "$value": "{type.title}",
+      "$description": "The title of any screen that holds a list, a form, a step or a record. Semibold, primary ink (titles-and-labels 1)."
+    },
+    "role-statement": {
+      "$value": "{type.display}",
+      "$description": "A one-thing screen whose title IS the content: an outcome, a dead end, an outage (titles-and-labels 2). Bold."
+    },
+    "role-sheet-title": {
+      "$value": "{type.subhead}",
+      "$description": "The title of a sheet, and instructions drawn over the live camera — a step below a screen title because a sheet is subordinate to the screen it covers (titles-and-labels 3). Semibold."
+    },
+    "role-group-label": {
+      "$value": "{type.micro}",
+      "$description": "A label above a group of rows: regular weight, muted ink, upper case, untracked (titles-and-labels 4)."
+    }
+  },
+  "leading": {
+    "$type": "dimension",
+    "role-screen-title": {
+      "$value": "{leading.title}",
+      "$description": "Matches type.role.screen-title."
+    },
+    "role-statement": {
+      "$value": "{leading.display}",
+      "$description": "Matches type.role.statement."
+    },
+    "role-sheet-title": {
+      "$value": "{leading.subhead}",
+      "$description": "Matches type.role.sheet-title."
+    },
+    "role-group-label": {
+      "$value": "{leading.micro}",
+      "$description": "Matches type.role.group-label."
+    }
+  }
+}

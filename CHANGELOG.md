@@ -1,28 +1,47 @@
 # Changelog
 
-## Unreleased — for 3.5.0 (design lane, 2026-10-09)
+## 4.0.0 — prepared 2026-10-14 (design lane; tag and date are Ben's)
 
-**Two motion tokens the canon already uses.** `brand.motion.easing.standard` (`cubic-bezier(0.2, 0, 0, 1)`,
-Material 3 standard) for a move that starts and ends on screen, and the web stand-in for a spring at
-`duration.standard`; `brand.motion.duration.stagger` (40ms) for the offset between items entering in
-sequence, first five only. CSS emits `--curio-ease-standard` / `--ease-curio-standard` and
-`--curio-duration-stagger` / `--transition-duration-curio-stagger`; Swift and Kotlin get the duration (curves
-still emit to web only, see canon/design/TOKENS.md, Parity). Values from
-canon/design/token-proposals/motion.json; asked for in LANE-REPORTS/DESIGN-BRIEF-2026-10-09.md §2.
-Outputs rebuilt; `verify-outputs.mjs` passes.
+One tag for everything since 3.4.0. It is a major because two renames break any consumer of the old
+names. **No value moved**: if a screen looks different after migrating, the migration was applied
+wrongly. Table and replace order (longest name first): `MIGRATION-2026-09-20.md`.
 
-## 3.5.0 — 2026-09-22
+**Renames (breaking).**
+- Spacing is numbered, not t-shirt sized: `xs`..`xxl` are `1`..`6` (4, 8, 12, 16, 24, 32), and `7` (48)
+  and `8` (64) are new. A t-shirt scale cannot name an insertion; a spacing scale eventually needs one.
+- `line.quiet` is `line.border`, and there is a new `line.divider`, quieter than every border. One
+  token was doing two jobs (a panel's edge and the rule between two rows) at one value.
 
-**Type roles.** Four role tokens — `type.role-screen-title`, `type.role-statement`,
-`type.role-sheet-title`, `type.role-group-label`, each with its matching `leading.role-*` — pointing
-at the existing sizes (title, display, subhead, micro). No value changes and no new sizes: the four
-rules in `canon/design/patterns/titles-and-labels.md` existed only as prose, so each lane chose a
-size by eye and the same kind of text drifted apart between web, iOS and Android. A role never
-carries its own number, so changing the scale still changes everything with it.
+**Added.**
+- Type roles: `type.role-screen-title`, `-statement`, `-sheet-title`, `-group-label`, each with its
+  matching `leading.role-*`, pointing at the existing sizes (title, display, subhead, micro). No new
+  sizes: the four rules in `canon/design/patterns/titles-and-labels.md` existed only as prose, so each
+  lane chose a size by eye. A role never carries its own number. Names are flat because
+  `verify-outputs.mjs` pairs a size with its leading by the second path segment.
+- Motion: `brand.motion.easing.standard` (`cubic-bezier(0.2, 0, 0, 1)`, Material 3 standard; the web
+  stand-in for a spring at `duration.standard`) and `brand.motion.duration.stagger` (40ms, first five
+  items only). CSS emits `--curio-ease-standard` / `--ease-curio-standard` and
+  `--curio-duration-stagger` / `--transition-duration-curio-stagger`; Swift and Kotlin get the
+  duration, curves still emit to web only.
+- Scrim and camera surfaces: `scrim.modal`, `scrim.camera-control`, `overlay.capture-flash`.
+- Brand violet-300, the value colour on dark surfaces.
+- Capsule radius, a shape not a number: CSS only (`iOS` uses `Capsule()`, Compose `CircleShape`).
 
-Names are flat (`role-screen-title`, not `role.screen-title`) because `verify-outputs.mjs` pairs a
-size with its leading by the second path segment; a nested role would have had no leading to pair
-with and the size would have shipped without a line height.
+**Changed.** The modal scrim is `rgba(7, 9, 13, 0.80)` (surface-sunken at 80%). It was
+midnight-900 at 75%, lighter than the canvas it covers, so on a dark product the scrim raised the
+page instead of receding it (Ben, 2026-09-21: "make the page darker not lighter").
+
+**Fixed.** Two silent CSS defects in the build: a unit appended twice to an aliased value
+(`120msms`, `24pxpx`; CSS only, so three of four outputs looked fine), and a theme-name slice that
+assumed every duration and easing sits at one depth.
+
+**Gate.** The AA gate prints its blind spots on every run and gains the two nobody had written
+(text drawn at an alpha the gate does not see). CI is manual-only. `verify-outputs.mjs`: 443 value
+comparisons.
+
+**Not verified.** That any app still compiles against the renames. Measured on pokemon-tool
+`origin/main` on 2026-10-10: 0 files use `spacing-curio-xs`..`xxl` by name, 85 use a
+`curio-line-quiet` class, 2 use `--color-curio-line-quiet`. iOS and Android were not measured.
 
 ## 3.4.0 — 2026-09-03
 
