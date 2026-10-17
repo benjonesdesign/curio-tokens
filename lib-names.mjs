@@ -61,6 +61,13 @@ export const isIosFont = (t) => t.path[0] === "font-ios";
 // correct on one platform reaches three, which is the failure this package keeps hitting.
 export const isWebOnlyShape = (t) => t.path[0] === "radius" && t.path[1] === "capsule";
 
+/** The leaf name of a token, independent of how deep its group sits in the path. */
+function leafAfter(path, group) {
+  const i = path.lastIndexOf(group);
+  const rest = i === -1 ? path.filter((s) => s !== "brand" && s !== "motion") : path.slice(i + 1);
+  return (rest.length ? rest : path.slice(-1)).join("-");
+}
+
 export function themeName(t) {
   const n = cleanName(t.path); // e.g. curio-surface-base
   if (isColor(t))   return `--color-${n.replace(/^curio-/, "curio-")}`;
@@ -77,8 +84,12 @@ export function themeName(t) {
   // they sat in :root, and Tailwind v4 generates utilities only from @theme, so `duration-curio-fast`
   // and `ease-curio-reveal` did not exist as classes. Note the namespace is --transition-duration-*,
   // not --duration-*; a token under the wrong namespace is dropped SILENTLY, no error, no class.
-  if (isDuration(t)) return `--transition-duration-curio-${t.path.slice(3).join("-")}`;
-  if (isEasing(t))   return `--ease-curio-${t.path.slice(3).join("-")}`;
+  // `t.path.slice(3)` assumed every duration and easing lives at brand.motion.<group>.<name>. One
+  // added anywhere shallower produced an EMPTY suffix — `--transition-duration-curio-:` — with no
+  // error and no class, which is the same silent-drop the note above warns about, from the other
+  // direction. Take the segments after the group instead, wherever the group sits.
+  if (isDuration(t)) return `--transition-duration-curio-${leafAfter(t.path, "duration")}`;
+  if (isEasing(t))   return `--ease-curio-${leafAfter(t.path, "easing")}`;
   return `--${n}`;
 }
 

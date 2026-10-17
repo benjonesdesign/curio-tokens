@@ -41,8 +41,19 @@ function colorToCss(value) {
   return String(value);
 }
 
-const dimToCss = (v) => (typeof v === "object" && v ? `${v.value}${v.unit ?? "px"}` : `${v}px`);
-const durToCss = (v) => (typeof v === "object" && v ? `${v.value}${v.unit ?? "ms"}` : `${v}ms`);
+// `curio/value` is TRANSITIVE, so an alias is re-transformed after its target has already been
+// converted to a platform string. Without these guards `{brand.motion.duration.fast}` came out as
+// `120msms`, and a dimension written as the string "24px" rather than the DTCG object form came out
+// as `24pxpx` — on CSS only, while Swift, Kotlin and Android stayed correct, so three outputs of
+// four looked fine and the build passed. Found 2026-09-18 by building the canon's drafts.
+// The guard is "already carries a unit → pass through", not "is a string → pass through": a bare
+// numeric string still needs its unit appended.
+const HAS_LENGTH_UNIT = /^-?[\d.]+(px|rem|em|%)$/;
+const HAS_TIME_UNIT   = /^-?[\d.]+m?s$/;
+const dimToCss = (v) => (typeof v === "object" && v ? `${v.value}${v.unit ?? "px"}`
+  : HAS_LENGTH_UNIT.test(String(v)) ? String(v) : `${v}px`);
+const durToCss = (v) => (typeof v === "object" && v ? `${v.value}${v.unit ?? "ms"}`
+  : HAS_TIME_UNIT.test(String(v)) ? String(v) : `${v}ms`);
 const bezierToCss = (v) => (Array.isArray(v) ? `cubic-bezier(${v.join(", ")})` : String(v));
 const fontToCss = (v) => (Array.isArray(v) ? v.map((f) => (/\s/.test(f) ? `"${f}"` : f)).join(", ") : String(v));
 

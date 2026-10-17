@@ -9,6 +9,7 @@ public enum CurioTokens {
     public static let brandPaper50 = Color(red: 0.9529, green: 0.9412, blue: 0.9098)
     public static let brandCurioLight400 = Color(red: 0.4745, green: 0.8784, blue: 0.7647)
     public static let brandCurioLight700 = Color(red: 0.0902, green: 0.4039, blue: 0.3373)
+    public static let brandViolet300 = Color(red: 0.6549, green: 0.6235, blue: 0.9412)
     public static let brandViolet400 = Color(red: 0.5098, green: 0.4627, blue: 0.9098)
     public static let brandViolet700 = Color(red: 0.2980, green: 0.2471, blue: 0.7176)
     public static let brandAmber400 = Color(red: 0.9059, green: 0.6588, blue: 0.3608)
@@ -28,7 +29,8 @@ public enum CurioTokens {
     public static let accentReady = Color(red: 0.4745, green: 0.8784, blue: 0.7647)
     public static let accentEvidence = Color(red: 0.5098, green: 0.4627, blue: 0.9098)
     public static let accentCompletion = Color(red: 0.9059, green: 0.6588, blue: 0.3608)
-    public static let lineQuiet = Color(red: 0.9529, green: 0.9412, blue: 0.9098, opacity: 0.14)
+    public static let lineBorder = Color(red: 0.9529, green: 0.9412, blue: 0.9098, opacity: 0.14)
+    public static let lineDivider = Color(red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.10)
     public static let lineStrong = Color(red: 0.9529, green: 0.9412, blue: 0.9098, opacity: 0.24)
     public static let fallbackSurfaceBase = Color(red: 0.9529, green: 0.9412, blue: 0.9098)
     public static let fallbackTextPrimary = Color(red: 0.0431, green: 0.0510, blue: 0.0706)
@@ -36,6 +38,9 @@ public enum CurioTokens {
     public static let fallbackAccentEvidenceText = Color(red: 0.2980, green: 0.2471, blue: 0.7176)
     public static let fallbackAccentAttentionText = Color(red: 0.4824, green: 0.2980, blue: 0.0745)
     public static let focusRing = Color(red: 0.9059, green: 0.6588, blue: 0.3608)
+    public static let scrimModal = Color(red: 0.0275, green: 0.0353, blue: 0.0510, opacity: 0.80)
+    public static let scrimCameraControl = Color(red: 0.0000, green: 0.0000, blue: 0.0000, opacity: 0.60)
+    public static let overlayCaptureFlash = Color(red: 1.0000, green: 1.0000, blue: 1.0000, opacity: 0.40)
     public static let statusProductLowConfidence = Color(red: 0.6039, green: 0.6392, blue: 0.7216)
     public static let statusProductReady = Color(red: 0.4824, green: 0.6902, blue: 0.9412)
     public static let statusProductListed = Color(red: 0.3490, green: 0.7882, blue: 0.8392)
@@ -65,6 +70,10 @@ public enum CurioTokens {
     public static let radiusMd: CGFloat = 12
     public static let radiusLg: CGFloat = 16
     public static let radiusFeature: CGFloat = 24
+    public static let typeRoleScreenTitle: CGFloat = 24
+    public static let typeRoleStatement: CGFloat = 32
+    public static let typeRoleSheetTitle: CGFloat = 20
+    public static let typeRoleGroupLabel: CGFloat = 12
     public static let typeMicro: CGFloat = 12
     public static let typeCaption: CGFloat = 14
     public static let typeBody: CGFloat = 16
@@ -72,6 +81,10 @@ public enum CurioTokens {
     public static let typeTitle: CGFloat = 24
     public static let typeDisplay: CGFloat = 32
     public static let typeHero: CGFloat = 40
+    public static let leadingRoleScreenTitle: CGFloat = 30
+    public static let leadingRoleStatement: CGFloat = 40
+    public static let leadingRoleSheetTitle: CGFloat = 26
+    public static let leadingRoleGroupLabel: CGFloat = 18
     public static let leadingMicro: CGFloat = 18
     public static let leadingCaption: CGFloat = 20
     public static let leadingBody: CGFloat = 24
@@ -81,18 +94,21 @@ public enum CurioTokens {
     public static let leadingHero: CGFloat = 48
   }
   public enum Spacing {
-    public static let spacingXs: CGFloat = 4
-    public static let spacingSm: CGFloat = 8
-    public static let spacingMd: CGFloat = 12
-    public static let spacingLg: CGFloat = 16
-    public static let spacingXl: CGFloat = 24
-    public static let spacingXxl: CGFloat = 32
+    public static let spacing1: CGFloat = 4
+    public static let spacing2: CGFloat = 8
+    public static let spacing3: CGFloat = 12
+    public static let spacing4: CGFloat = 16
+    public static let spacing5: CGFloat = 24
+    public static let spacing6: CGFloat = 32
+    public static let spacing7: CGFloat = 48
+    public static let spacing8: CGFloat = 64
   }
   public enum Duration {
     public static let durationFast: TimeInterval = 0.12
     public static let durationStandard: TimeInterval = 0.2
     public static let durationReveal: TimeInterval = 0.4
     public static let durationAmbient: TimeInterval = 8
+    public static let durationStagger: TimeInterval = 0.04
   }
   public enum Fonts {
     public static let brandTypeDisplay = "Plus Jakarta Sans"

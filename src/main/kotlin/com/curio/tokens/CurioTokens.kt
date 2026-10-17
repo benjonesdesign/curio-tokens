@@ -15,6 +15,7 @@ public object CurioTokens {
     public val brandPaper50: Long = 0xFFF3F0E8L
     public val brandCurioLight400: Long = 0xFF79E0C3L
     public val brandCurioLight700: Long = 0xFF176756L
+    public val brandViolet300: Long = 0xFFA79FF0L
     public val brandViolet400: Long = 0xFF8276E8L
     public val brandViolet700: Long = 0xFF4C3FB7L
     public val brandAmber400: Long = 0xFFE7A85CL
@@ -34,7 +35,8 @@ public object CurioTokens {
     public val accentReady: Long = 0xFF79E0C3L
     public val accentEvidence: Long = 0xFF8276E8L
     public val accentCompletion: Long = 0xFFE7A85CL
-    public val lineQuiet: Long = 0x24F3F0E8L
+    public val lineBorder: Long = 0x24F3F0E8L
+    public val lineDivider: Long = 0x1AFFFFFFL
     public val lineStrong: Long = 0x3DF3F0E8L
     public val fallbackSurfaceBase: Long = 0xFFF3F0E8L
     public val fallbackTextPrimary: Long = 0xFF0B0D12L
@@ -42,6 +44,9 @@ public object CurioTokens {
     public val fallbackAccentEvidenceText: Long = 0xFF4C3FB7L
     public val fallbackAccentAttentionText: Long = 0xFF7B4C13L
     public val focusRing: Long = 0xFFE7A85CL
+    public val scrimModal: Long = 0xCC07090DL
+    public val scrimCameraControl: Long = 0x99000000L
+    public val overlayCaptureFlash: Long = 0x66FFFFFFL
     public val statusProductLowConfidence: Long = 0xFF9AA3B8L
     public val statusProductReady: Long = 0xFF7BB0F0L
     public val statusProductListed: Long = 0xFF59C9D6L
@@ -71,6 +76,10 @@ public object CurioTokens {
     public val radiusMd: Float = 12f
     public val radiusLg: Float = 16f
     public val radiusFeature: Float = 24f
+    public val typeRoleScreenTitle: Float = 24f
+    public val typeRoleStatement: Float = 32f
+    public val typeRoleSheetTitle: Float = 20f
+    public val typeRoleGroupLabel: Float = 12f
     public val typeMicro: Float = 12f
     public val typeCaption: Float = 14f
     public val typeBody: Float = 16f
@@ -78,6 +87,10 @@ public object CurioTokens {
     public val typeTitle: Float = 24f
     public val typeDisplay: Float = 32f
     public val typeHero: Float = 40f
+    public val leadingRoleScreenTitle: Float = 30f
+    public val leadingRoleStatement: Float = 40f
+    public val leadingRoleSheetTitle: Float = 26f
+    public val leadingRoleGroupLabel: Float = 18f
     public val leadingMicro: Float = 18f
     public val leadingCaption: Float = 20f
     public val leadingBody: Float = 24f
@@ -87,18 +100,21 @@ public object CurioTokens {
     public val leadingHero: Float = 48f
   }
   public object Spacing {
-    public val spacingXs: Float = 4f
-    public val spacingSm: Float = 8f
-    public val spacingMd: Float = 12f
-    public val spacingLg: Float = 16f
-    public val spacingXl: Float = 24f
-    public val spacingXxl: Float = 32f
+    public val spacing1: Float = 4f
+    public val spacing2: Float = 8f
+    public val spacing3: Float = 12f
+    public val spacing4: Float = 16f
+    public val spacing5: Float = 24f
+    public val spacing6: Float = 32f
+    public val spacing7: Float = 48f
+    public val spacing8: Float = 64f
   }
   public object Duration {
     public val durationFast: Long = 120L
     public val durationStandard: Long = 200L
     public val durationReveal: Long = 400L
     public val durationAmbient: Long = 8000L
+    public val durationStagger: Long = 40L
   }
   public object Weight {
     public val weightRegular: Int = 400

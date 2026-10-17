@@ -4,20 +4,48 @@
     "dark": {
       "surface": {
         "$type": "color",
-        "sunken":  { "$value": "#07090D", "$description": "Below-base wells (deepest)." },
-        "overlay": { "$value": "#1F2438", "$description": "Popovers, menus, toasts above raised." },
-        "inset":   { "$value": "#262B40", "$description": "Inset one step up from raised (was compat --color-surface-3)." }
+        "sunken": {
+          "$value": "#07090D",
+          "$description": "Below-base wells (deepest)."
+        },
+        "overlay": {
+          "$value": "#1F2438",
+          "$description": "Popovers, menus, toasts above raised."
+        },
+        "inset": {
+          "$value": "#262B40",
+          "$description": "Inset one step up from raised (was compat --color-surface-3)."
+        }
       },
       "text": {
         "$type": "color",
-        "secondary": { "$value": "rgba(243, 240, 232, 0.72)", "$description": "Supporting text on dark (paper @72%)." },
-        "muted":     { "$value": "rgba(243, 240, 232, 0.52)", "$description": "De-emphasised text/labels (paper @52%)." },
-        "on-accent": { "$value": "{brand.color.archive-950}", "$description": "Ink on a luminous accent fill." }
+        "secondary": {
+          "$value": "rgba(243, 240, 232, 0.72)",
+          "$description": "Supporting text on dark (paper @72%)."
+        },
+        "muted": {
+          "$value": "rgba(243, 240, 232, 0.52)",
+          "$description": "De-emphasised text/labels (paper @52%)."
+        },
+        "on-accent": {
+          "$value": "{brand.color.archive-950}",
+          "$description": "Ink on a luminous accent fill."
+        }
       },
       "line": {
         "$type": "color",
-        "quiet":  { "$value": "{brand.color.line-on-dark}", "$description": "Default separators / hairlines." },
-        "strong": { "$value": "rgba(243, 240, 232, 0.24)", "$description": "Emphasised borders / focused fields." }
+        "border": {
+          "$value": "{brand.color.line-on-dark}",
+          "$description": "Structural edge — a panel, a card, a field. Was line.quiet, renamed 2026-09-20 (Ben) so that the pair border/divider says which is which; 'quiet' did not, and the whole rule is that a divider is quieter than a border."
+        },
+        "divider": {
+          "$value": "rgba(255, 255, 255, 0.10)",
+          "$description": "Between items within one list, and nothing else. Never above the first item or below the last, and never between sections — space does that (patterns/separation.md). Pure white rather than the paper tint: at 10% the tint is not perceptible, and an untinted separator composes predictably over any surface, including a card image."
+        },
+        "strong": {
+          "$value": "rgba(243, 240, 232, 0.24)",
+          "$description": "Emphasised borders / focused fields."
+        }
       }
     }
   }

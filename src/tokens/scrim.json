@@ -1,0 +1,21 @@
+{
+  "$description": "Scrim and camera-surface colours. The modal scrim replaces ConfirmDialog's hardcoded 50% black; the two camera values are the dark end of the control band and the capture flash. Measured from the drawn screens (curio-shared/canon/design, 2026-09-18). The capture flash is held for brand.motion.duration.fast and deliberately gets no duration token of its own. The control band is a GRADIENT — scrim.camera-control is one stop; its geometry is owned by the capture-surface template, not by a token.",
+  "scrim": {
+    "$type": "color",
+    "modal": {
+      "$value": "rgba(7, 9, 13, 0.80)",
+      "$description": "The dim behind a sheet, a dialog or any overlay that takes the whole screen. surface-sunken at 80%. CHANGED 2026-09-21 (Ben: 'I'd rather the overlay make the page darker not lighter'): it was midnight-900 at 75%, which is LIGHTER than the base canvas it sits over, so on a dark product the scrim raised the page instead of receding it. A scrim must be darker than every surface it covers; sunken is the darkest surface in the set. At this level content behind is legible as SHAPE and not as text, which is what a modal scrim is for — the seller keeps their place without being able to read past the decision. Replaces ConfirmDialog's hardcoded 50% black, which is both a different colour and a different opacity from everything else that dims the screen."
+    },
+    "camera-control": {
+      "$value": "rgba(0, 0, 0, 0.60)",
+      "$description": "The DARK END of the gradient the camera controls sit on. Pure black, not surface-overlay, because it sits over a live camera feed rather than over the app's own surface — a tinted scrim over arbitrary camera colour reads as a colour cast. See the gradient note below: this token is one stop, not the whole band."
+    }
+  },
+  "overlay": {
+    "$type": "color",
+    "capture-flash": {
+      "$value": "rgba(255, 255, 255, 0.40)",
+      "$description": "The full-screen white flash at the moment of capture. 40%, not 100% — the frame behind stays visible through it, so the flash reads as confirmation that THIS shot was taken rather than as the screen blanking."
+    }
+  }
+}
